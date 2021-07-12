@@ -25,6 +25,7 @@ def isOpPriorited(top, op):
 
 
 def infixToPostfix(infixExpression):
+    infixExpression = re.sub('\s', '', infixExpression)
     postfixExpression = []
     operatorStack = []
 

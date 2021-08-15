@@ -5,6 +5,28 @@ import string
 from sys import argv
 from math import floor
 
+operatorPrecedences = {
+    '^': 120,
+    '*': 100,
+    '/': 100,
+    '%': 100,
+    '+': 95,
+    '-': 95,
+    '>': 80,
+    '<': 80,
+    '>=': 80,
+    '<=': 80,
+    '==': 80,
+    '!=': 80,
+    '&&': 75,
+    '||': 70
+}
+
+unaryOperators = {
+    '-': lambda x: -x,
+    '!': lambda x: not x
+}
+
 
 def round_half_up(n, decimals=0):
     multiplier = 10 ** decimals
@@ -20,8 +42,7 @@ def isOperator(x):
 
 
 def isOpPriorited(top, op):
-    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '%': 2, '^': 3}
-    return precedence[op] <= precedence[top]
+    return operatorPrecedences[op] <= operatorPrecedences[top]
 
 
 def infixToPostfix(infixExpression):

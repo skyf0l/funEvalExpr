@@ -19,7 +19,24 @@ operatorPrecedences = {
     '==': 80,
     '!=': 80,
     '&&': 75,
-    '||': 70
+    '||': 70,
+}
+
+operators = {
+    '^': lambda arg1, arg2: arg1 ** arg2,
+    '*': lambda arg1, arg2: arg1 * arg2,
+    '/': lambda arg1, arg2: arg1 / arg2,
+    '%': lambda arg1, arg2: arg1 % arg2,
+    '+': lambda arg1, arg2: arg1 + arg2,
+    '-': lambda arg1, arg2: arg1 - arg2,
+    '>': lambda arg1, arg2: arg1 > arg2,
+    '<': lambda arg1, arg2: arg1 < arg2,
+    '>=': lambda arg1, arg2: arg1 >= arg2,
+    '<=': lambda arg1, arg2: arg1 <= arg2,
+    '==': lambda arg1, arg2: arg1 == arg2,
+    '!=': lambda arg1, arg2: arg1 != arg2,
+    '&&': lambda arg1, arg2: arg1 and arg2,
+    '||': lambda arg1, arg2: arg1 or arg2,
 }
 
 unaryOperators = {
@@ -90,24 +107,13 @@ def evalPostfix(postfixExpression):
             stack.append(op)
         elif op == '!':
             arg1 = stack.pop(-1)
-            stack.append(not arg1)
+            opRes = unaryOperators[op](arg1)
+            stack.append(opRes)
         else:
             arg1 = stack.pop(-2)
             arg2 = stack.pop(-1)
-            if op == '+':
-                stack.append(arg1 + arg2)
-            elif op == '-':
-                stack.append(arg1 - arg2)
-            elif op == '*':
-                stack.append(arg1 * arg2)
-            elif op == '/':
-                stack.append(arg1 / arg2)
-            elif op == '%':
-                stack.append(arg1 % arg2)
-            elif op == '^':
-                stack.append(arg1 ** arg2)
-            else:
-                stack.append(op)
+            opRes = operators[op](arg1, arg2)
+            stack.append(opRes)
 
     return stack.pop()
 

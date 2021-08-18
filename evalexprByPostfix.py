@@ -5,7 +5,30 @@ import string
 from sys import argv
 from math import floor
 
+operators = [
+    '(',
+    ')',
+    '^',
+    '*',
+    '/',
+    '%',
+    '+',
+    '-',
+    '>',
+    '<',
+    '>=',
+    '<=',
+    '==',
+    '!=',
+    '&&',
+    '||',
+    '!',
+]
+
 operatorPrecedences = {
+    'pos': 2.5,
+    'neg': 2.5,
+    'not': 2.5,
     '^': 3,
     '*': 2,
     '/': 2,
@@ -22,7 +45,7 @@ operatorPrecedences = {
     '||': -2,
 }
 
-operators = {
+operatorsFunctions = {
     '^': lambda arg1, arg2: arg1 ** arg2,
     '*': lambda arg1, arg2: arg1 * arg2,
     '/': lambda arg1, arg2: arg1 / arg2,
@@ -40,14 +63,28 @@ operators = {
 }
 
 unaryOperators = {
-    '-': lambda x: -x,
-    '!': lambda x: not x
+    '+': 'pos',
+    '-': 'neg',
+    '!': 'not',
+}
+
+unaryOperatorsFunctions = {
+    'pos': lambda x: x,
+    'neg': lambda x: -x,
+    'not': lambda x: not x,
 }
 
 
 def round_half_up(n, decimals=0):
     multiplier = 10 ** decimals
     return floor(n*multiplier + 0.5) / multiplier
+
+
+def findNextOp(expression):
+    for op in operators:
+        if op == expression[:len(op)]:
+            return op
+    raise ValueError
 
 
 def isOperand(x):
@@ -69,18 +106,17 @@ def infixToPostfix(infixExpression):
 
     lastOp = ''
     while infixExpression:
-        if not lastOp or lastOp == '(' or lastOp in operatorPrecedences:
-            m = re.search('^(-?[\d\.]+)', infixExpression)
-        else:
-            m = re.search('^([\d\.]+)', infixExpression)
+        m = re.search('^([\d\.]+)', infixExpression)
         if m:
             op = m.group(1)
             infixExpression = infixExpression[len(op):]
             postfixExpression.append(round_half_up(float(op), 2))
         else:
-            op = infixExpression[0]
-            infixExpression = infixExpression[1:]
-            if not operatorStack or operatorStack[-1] == '(':
+            op = findNextOp(infixExpression)
+            infixExpression = infixExpression[len(op):]
+            if (not lastOp or isOperator(lastOp)) and op in unaryOperators:
+                operatorStack.append(unaryOperators[op])
+            elif not operatorStack or operatorStack[-1] == '(':
                 operatorStack.append(op)
             else:
                 if op == '(':
@@ -99,21 +135,22 @@ def infixToPostfix(infixExpression):
         postfixExpression.append(operatorStack.pop(-1))
     return postfixExpression
 
-
 def evalPostfix(postfixExpression):
     stack = []
     for op in postfixExpression:
         if type(op) is float:
             stack.append(op)
-        elif op == '!':
+        elif op in unaryOperatorsFunctions:
             arg1 = stack.pop(-1)
-            opRes = unaryOperators[op](arg1)
+            opRes = unaryOperatorsFunctions[op](arg1)
             stack.append(opRes)
-        else:
+        elif op in operatorsFunctions:
             arg1 = stack.pop(-2)
             arg2 = stack.pop(-1)
-            opRes = operators[op](arg1, arg2)
+            opRes = operatorsFunctions[op](arg1, arg2)
             stack.append(opRes)
+        else:
+            raise ValueError
 
     return stack.pop()
 

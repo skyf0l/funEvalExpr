@@ -42,33 +42,55 @@ function test_evalexpr_error_handling() {
     fi
 }
 
-# error handling
+# Error handling
 echo -e "$BOLD""Test error handling""$UNBOLD"
 test_evalexpr_error_handling ""
 test_evalexpr_error_handling "+"
 test_evalexpr_error_handling "2+"
-test_evalexpr_error_handling "+2"
 test_evalexpr_error_handling "2**2"
+test_evalexpr_error_handling "(2"
+test_evalexpr_error_handling "2)"
 
 # result
-echo
-echo -e "$BOLD""Test result""$UNBOLD"
+echo -e "\n$BOLD""Test result""$UNBOLD"
+
+# Somes tests
 test_evalexpr "3+5.34" 8.34
 test_evalexpr "(0.345 + 5) * (- 2 -1) / 3" -5.35
-
 test_evalexpr "(3+2)*5" 25.00
 
 ## Unary operators
+echo -e "\n$BOLD""Test unary operators""$UNBOLD"
 
-# Negation
+# Unary positive
+echo "Test unary positive"
+test_evalexpr "+0" 0.00
+test_evalexpr "+1" 1.00
+test_evalexpr "++++1" 1.00
+
+# Unary negative
+echo "Test unary negative"
 test_evalexpr "-0" 0.00
 test_evalexpr "-1" -1.00
+test_evalexpr "--1" 1.00
+test_evalexpr "---1" -1.00
 
 test_evalexpr "1--1" 2.00
 test_evalexpr "-1--1" 0.00
+test_evalexpr "1---1" 0.00
 test_evalexpr "-1--1--1" 1.00
 
-
 # Logical not
+echo "Test logical not"
 test_evalexpr "!0" 1.00
 test_evalexpr "!1" 0.00
+
+# Unary operators priority
+echo "Test unary operators priority"
+test_evalexpr "-1^2" -1.00
+test_evalexpr "(-1)^2" 1.00
+
+# Unary operators series
+echo "Test unary operators series"
+test_evalexpr "--+-+--+-++---+-+-++--+-+-+--1" -1.00
+test_evalexpr "--!+-!+-!-!+-+!!+--!-!!!+-+-!!+!!+--+-!+!-!+!--1" 1.00

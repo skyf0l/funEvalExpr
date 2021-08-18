@@ -52,7 +52,7 @@ def infixToPostfix(infixExpression):
 
     lastOp = ''
     while infixExpression:
-        if not lastOp or lastOp == '(':
+        if not lastOp or lastOp == '(' or lastOp in operatorPrecedences:
             m = re.search('^(-?[\d\.]+)', infixExpression)
         else:
             m = re.search('^([\d\.]+)', infixExpression)
@@ -85,10 +85,12 @@ def infixToPostfix(infixExpression):
 
 def evalPostfix(postfixExpression):
     stack = []
-
     for op in postfixExpression:
         if type(op) is float:
             stack.append(op)
+        elif op == '!':
+            arg1 = stack.pop(-1)
+            stack.append(not arg1)
         else:
             arg1 = stack.pop(-2)
             arg2 = stack.pop(-1)

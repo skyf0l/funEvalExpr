@@ -1,13 +1,24 @@
 #!/usr/bin/env python3
 
+import sys
 import re
 import string
 from sys import argv
 from math import floor
 
-operators = [
+parenthesis = [
     '(',
     ')',
+]
+
+operators = [
+    '>=',
+    '<=',
+    '==',
+    '!=',
+    '&&',
+    '||',
+    'e',
     '^',
     '*',
     '/',
@@ -16,12 +27,6 @@ operators = [
     '-',
     '>',
     '<',
-    '>=',
-    '<=',
-    '==',
-    '!=',
-    '&&',
-    '||',
     '!',
 ]
 
@@ -29,6 +34,7 @@ operatorPrecedences = {
     'pos': 2.5,
     'neg': 2.5,
     'not': 2.5,
+    'e': 3,
     '^': 3,
     '*': 2,
     '/': 2,
@@ -46,6 +52,7 @@ operatorPrecedences = {
 }
 
 operatorsFunctions = {
+    'e': lambda arg1, arg2: arg1 * 10 ** arg2,
     '^': lambda arg1, arg2: arg1 ** arg2,
     '*': lambda arg1, arg2: arg1 * arg2,
     '/': lambda arg1, arg2: arg1 / arg2,
@@ -81,7 +88,7 @@ def round_half_up(n, decimals=0):
 
 
 def findNextOp(expression):
-    for op in operators:
+    for op in operators + parenthesis:
         if op == expression[:len(op)]:
             return op
     raise ValueError
@@ -92,7 +99,7 @@ def isOperand(x):
 
 
 def isOperator(x):
-    return not isOperand(x)
+    return x in operators
 
 
 def isOpPriorited(top, op):
@@ -114,10 +121,13 @@ def infixToPostfix(infixExpression):
         else:
             op = findNextOp(infixExpression)
             infixExpression = infixExpression[len(op):]
-            if (not lastOp or isOperator(lastOp)) and op in unaryOperators:
+            if (not lastOp or lastOp == '(' or isOperator(lastOp)) and op in unaryOperators:
                 operatorStack.append(unaryOperators[op])
             elif not operatorStack or operatorStack[-1] == '(':
-                operatorStack.append(op)
+                if op == ')':
+                    operatorStack.pop(-1)
+                else:
+                    operatorStack.append(op)
             else:
                 if op == '(':
                     operatorStack.append(op)
@@ -134,6 +144,7 @@ def infixToPostfix(infixExpression):
     while operatorStack:
         postfixExpression.append(operatorStack.pop(-1))
     return postfixExpression
+
 
 def evalPostfix(postfixExpression):
     stack = []

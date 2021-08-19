@@ -94,3 +94,91 @@ test_evalexpr "(-1)^2" 1.00
 echo "Test unary operators series"
 test_evalexpr "--+-+--+-++---+-+-++--+-+-+--1" -1.00
 test_evalexpr "--!+-!+-!-!+-+!!+--!-!!!+-+-!!+!!+--+-!+!-!+!--1" 1.00
+
+## Tests from https://github.com/ISibboI/evalexpr/blob/main/tests/integration.rs
+echo -e "\n$BOLD""Tests from https://github.com/ISibboI/evalexpr/blob/main/tests/integration.rs""$UNBOLD"
+
+# Unary examples
+echo "Unary examples"
+test_evalexpr "3" 3.00
+test_evalexpr "3.3" 3.30
+test_evalexpr "-3" -3.00
+test_evalexpr "-3.6" -3.60
+test_evalexpr "----3" 3.00
+test_evalexpr "1e0" 1.00
+test_evalexpr "1e-0" 1.00
+test_evalexpr "10e3" 10000.00
+test_evalexpr "10e+3" 10000.00
+test_evalexpr "10e-3" 0.01
+
+# Binary examples
+echo "Binary examples"
+test_evalexpr "1+3" 4.00
+test_evalexpr "3+1" 4.00
+test_evalexpr "3-5" -2.00
+test_evalexpr "5-3" 2.00
+test_evalexpr "5 / 4" 1.25
+test_evalexpr "5 *3" 15.00
+test_evalexpr "1.0+3" 4.00
+test_evalexpr "3.0+1" 4.00
+test_evalexpr "3-5.0" -2.00
+test_evalexpr "5-3.0" 2.00
+test_evalexpr "5 / 4.0" 1.25
+test_evalexpr "5.0 *3" 15.00
+test_evalexpr "5.0 *-3" -15.00
+test_evalexpr "5.0 *- 3" -15.00
+test_evalexpr "5.0 * -3" -15.00
+test_evalexpr "5.0 * - 3" -15.00
+test_evalexpr "-5.0 *-3" 15.00
+test_evalexpr "3+-1" 2.00
+test_evalexpr "-3-5" -8.00
+test_evalexpr "-5--3" -2.00
+test_evalexpr "5e2--3" 503.00
+test_evalexpr "-5e-2--3" 2.95
+
+# Arithmetic precedence examples
+echo "Arithmetic precedence examples"
+test_evalexpr "1+3-2" 2.00
+test_evalexpr "3+1*5" 8.00
+test_evalexpr "2*3-5" 1.00
+test_evalexpr "5-3/3" 4.00
+test_evalexpr "5 / 4*2" 2.50
+test_evalexpr "1-5 *3/15" 0.00
+test_evalexpr "15/7/2.0" 1.07
+test_evalexpr "15.0/7/2" 1.07
+test_evalexpr "15.0/-7/2" -1.07
+test_evalexpr "-15.0/7/2" -1.07
+test_evalexpr "-15.0/7/-2" 1.07
+
+# Braced examples
+echo "Braced examples"
+test_evalexpr "(1)" 1.00
+test_evalexpr "( 1.0 )" 1.00
+test_evalexpr "( -1 )" -1.00
+test_evalexpr "-(1)" -1.00
+test_evalexpr "-(1 + 3) * 7" -28.00
+test_evalexpr "(1 * 1) - 3" -2.00
+test_evalexpr "4 / (2 * 2)" 1.00
+test_evalexpr "7/(7/(7/(7/(7/(7)))))" 1.00
+
+# Mod examples
+echo "Mod examples"
+test_evalexpr "1 % 4" 1.00
+test_evalexpr "6 % 4" 2.00
+test_evalexpr "1 % 4 + 2" 3.00
+
+# Pow examples
+echo "Pow examples"
+test_evalexpr "1 ^ 4" 1.00
+test_evalexpr "6 ^ 4" 1296.00
+test_evalexpr "1 ^ 4 + 2" 3.00
+test_evalexpr "2 ^ (4 + 2)" 64.00
+
+# Boolean examples
+echo "Boolean examples"
+test_evalexpr "1 && 0" 0.00
+test_evalexpr "1 && 1 || 1 && 0" 1.00
+test_evalexpr "5 > 4" 1.00
+test_evalexpr "1 <= 1" 1.00
+test_evalexpr "5 > 4 && 1 <= 1" 1.00
+test_evalexpr "5.0 <= 4.9 || !(4 > 3.5)" 0.00

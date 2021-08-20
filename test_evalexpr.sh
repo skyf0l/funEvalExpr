@@ -95,6 +95,13 @@ echo "Test unary operators series"
 test_evalexpr "--+-+--+-++---+-+-++--+-+-+--1" -1.00
 test_evalexpr "--!+-!+-!-!+-+!!+--!-!!!+-+-!!+!!+--+-!+!-!+!--1" 1.00
 
+# Exponent priority
+echo "Exponent priority"
+test_evalexpr "2e3^2" 4000000.00
+test_evalexpr "(2e3)^2" 4000000.00
+test_evalexpr "2e(3^2)" 2000000000.00
+test_evalexpr "1.01^(2e2)" 7.32
+
 ## Tests from https://github.com/ISibboI/evalexpr/blob/main/tests/integration.rs
 echo -e "\n$BOLD""Tests from https://github.com/ISibboI/evalexpr/blob/main/tests/integration.rs""$UNBOLD"
 

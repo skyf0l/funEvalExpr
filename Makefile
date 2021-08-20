@@ -1,5 +1,5 @@
 all:
-	@stack build --copy-bins --local-bin-path ./
+	@stack build --copy-bins
 
 clean:
 	@stack clean
@@ -7,6 +7,8 @@ clean:
 fclean: clean
 	@stack purge
 	@rm -f ./funEvalExpr
+	@rm -f ./funEvalPostfixExpr
+	@rm -f ./funInfixToPostfixExpr
 
 re:
 	@$(MAKE) -s fclean

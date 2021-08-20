@@ -1,18 +1,13 @@
 name:                funEvalExpr
-version:             0.1.0.0
-github:              "githubuser/funEvalExpr"
+version:             1
+github:              "skyf0l/funEvalExpr"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2021 Author name here"
+author:              "Skyf0l"
+maintainer:          "tom.rorato@epitech.eu"
+copyright:           "2021 Skyf0l"
 
 extra-source-files:
 - README.md
-- ChangeLog.md
-
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
@@ -27,11 +22,25 @@ library:
 
 executables:
   funEvalExpr:
-    main:                Main.hs
+    main:                EvalExpr.hs
     source-dirs:         app
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+    - -main-is EvalExpr
+    dependencies:
+    - funEvalExpr
+
+  funInfixToPostfixExpr:
+    main:                InfixToPostfixExpr.hs
+    source-dirs:         app/sub_apps
+    ghc-options:
+    - -main-is InfixToPostfixExpr
+    dependencies:
+    - funEvalExpr
+
+  funEvalPostfixExpr:
+    main:                EvalPostfixExpr.hs
+    source-dirs:         app/sub_apps
+    ghc-options:
+    - -main-is EvalPostfixExpr
     dependencies:
     - funEvalExpr

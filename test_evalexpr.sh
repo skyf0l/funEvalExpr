@@ -96,7 +96,7 @@ test_evalexpr "--+-+--+-++---+-+-++--+-+-+--1" -1.00
 test_evalexpr "--!+-!+-!-!+-+!!+--!-!!!+-+-!!+!!+--+-!+!-!+!--1" 1.00
 
 # Exponent priority
-echo "Exponent priority"
+echo "Test exponent priority"
 test_evalexpr "2e3^2" 4000000.00
 test_evalexpr "(2e3)^2" 4000000.00
 test_evalexpr "2e(3^2)" 2000000000.00

@@ -1,4 +1,4 @@
-module EvalPostfixExpr where
+module MainEvalPostfixExpr where
 
 import Lib ( someFunc )
 

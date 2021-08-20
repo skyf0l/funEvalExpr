@@ -22,25 +22,25 @@ library:
 
 executables:
   funEvalExpr:
-    main:                EvalExpr.hs
+    main:                MainEvalExpr.hs
     source-dirs:         app
     ghc-options:
-    - -main-is EvalExpr
+    - -main-is MainEvalExpr
     dependencies:
     - funEvalExpr
 
   funInfixToPostfixExpr:
-    main:                InfixToPostfixExpr.hs
+    main:                MainInfixToPostfixExpr.hs
     source-dirs:         app/sub_apps
     ghc-options:
-    - -main-is InfixToPostfixExpr
+    - -main-is MainInfixToPostfixExpr
     dependencies:
     - funEvalExpr
 
   funEvalPostfixExpr:
-    main:                EvalPostfixExpr.hs
+    main:                MainEvalPostfixExpr.hs
     source-dirs:         app/sub_apps
     ghc-options:
-    - -main-is EvalPostfixExpr
+    - -main-is MainEvalPostfixExpr
     dependencies:
     - funEvalExpr

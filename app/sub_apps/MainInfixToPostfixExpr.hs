@@ -1,4 +1,4 @@
-module InfixToPostfixExpr where
+module MainInfixToPostfixExpr where
 
 import Lib ( someFunc )
 

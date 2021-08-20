@@ -1,4 +1,4 @@
-module EvalExpr where
+module MainEvalExpr where
 
 import Lib ( someFunc )
 

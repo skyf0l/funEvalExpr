@@ -1,2 +1,7 @@
+# stack
 .stack-work/
-*~
+
+# binaries
+funEvalExpr
+funEvalPostfixExpr
+funInfixToPostfixExpr

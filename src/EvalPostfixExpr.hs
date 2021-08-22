@@ -3,5 +3,7 @@ module EvalPostfixExpr
   )
 where
 
-evalPostfixExpr :: String -> Float
+import Operators (ExprElem)
+
+evalPostfixExpr :: [ExprElem] -> Float
 evalPostfixExpr _ = 0

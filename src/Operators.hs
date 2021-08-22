@@ -59,9 +59,9 @@ data ExprElem
 instance Read ExprElem where
   readsPrec _ x = case reads x :: [(Float, String)] of
     [(f, xs)] -> [(EEFloat f, xs)]
-    _ -> [(EEOperator operator, rest)]
-      where
-        [(operator, rest)] = reads x :: [(Operator, String)]
+    _ -> case reads x :: [(Operator, String)] of
+      [(operator, xs)] -> [(EEOperator operator, xs)]
+      _ -> []
 
 instance Show ExprElem where
   show (EEFloat f) = printf "%.2f" f

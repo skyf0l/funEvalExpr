@@ -7,6 +7,9 @@ module Operators
     ExprElem (..),
     evalBinaryOperator,
     evalUnaryOperator,
+    parseUnaryOp,
+    parseBinaryOp,
+    findNextOp,
   )
 where
 
@@ -128,3 +131,48 @@ evalBinaryOperator And f1 f2
 evalBinaryOperator Or f1 f2
   | f1 /= 0 || f2 /= 0 = 1
   | otherwise = 0
+
+parseUnaryOp :: String -> Maybe ExprElem
+parseUnaryOp "+" = Just $ EEOperator $ OpUnaryOperator Pos
+parseUnaryOp "-" = Just $ EEOperator $ OpUnaryOperator Neg
+parseUnaryOp "!" = Just $ EEOperator $ OpUnaryOperator Not
+parseUnaryOp _ = Nothing
+
+parseBinaryOp :: String -> Maybe ExprElem
+parseBinaryOp "e" = Just $ EEOperator $ OpBinaryOperator Exp
+parseBinaryOp "^" = Just $ EEOperator $ OpBinaryOperator Pow
+parseBinaryOp "*" = Just $ EEOperator $ OpBinaryOperator Mul
+parseBinaryOp "/" = Just $ EEOperator $ OpBinaryOperator Div
+parseBinaryOp "%" = Just $ EEOperator $ OpBinaryOperator Mod
+parseBinaryOp "+" = Just $ EEOperator $ OpBinaryOperator Add
+parseBinaryOp "-" = Just $ EEOperator $ OpBinaryOperator Sub
+parseBinaryOp ">=" = Just $ EEOperator $ OpBinaryOperator Ge
+parseBinaryOp ">" = Just $ EEOperator $ OpBinaryOperator Gt
+parseBinaryOp "<=" = Just $ EEOperator $ OpBinaryOperator Le
+parseBinaryOp "<" = Just $ EEOperator $ OpBinaryOperator Lt
+parseBinaryOp "==" = Just $ EEOperator $ OpBinaryOperator Eq
+parseBinaryOp "!=" = Just $ EEOperator $ OpBinaryOperator Ne
+parseBinaryOp "&&" = Just $ EEOperator $ OpBinaryOperator And
+parseBinaryOp "||" = Just $ EEOperator $ OpBinaryOperator Or
+parseBinaryOp _ = Nothing
+
+findNextOp :: String -> Maybe (String, String)
+findNextOp ('(' : xs) = Just ("(", xs)
+findNextOp (')' : xs) = Just (")", xs)
+findNextOp ('e' : xs) = Just ("e", xs)
+findNextOp ('^' : xs) = Just ("^", xs)
+findNextOp ('*' : xs) = Just ("*", xs)
+findNextOp ('/' : xs) = Just ("/", xs)
+findNextOp ('%' : xs) = Just ("%", xs)
+findNextOp ('+' : xs) = Just ("+", xs)
+findNextOp ('-' : xs) = Just ("-", xs)
+findNextOp ('>' : '=' : xs) = Just (">=", xs)
+findNextOp ('>' : xs) = Just (">", xs)
+findNextOp ('<' : '=' : xs) = Just ("<=", xs)
+findNextOp ('<' : xs) = Just ("<", xs)
+findNextOp ('=' : '=' : xs) = Just ("==", xs)
+findNextOp ('!' : '=' : xs) = Just ("!=", xs)
+findNextOp ('&' : '&' : xs) = Just ("&&", xs)
+findNextOp ('|' : '|' : xs) = Just ("||", xs)
+findNextOp ('!' : xs) = Just ("!", xs)
+findNextOp _ = Nothing

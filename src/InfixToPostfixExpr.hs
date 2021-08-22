@@ -14,6 +14,9 @@ import Operators
     ExprElem (..),
     Operator (..),
     UnaryOperator (..),
+    findNextOp,
+    parseBinaryOp,
+    parseUnaryOp,
   )
 
 -- number -> expected decimal digits -> result
@@ -24,32 +27,18 @@ roundHalfUp n d = fromInteger (round $ n * multiplier) / multiplier
 
 -- infix expression -> operator stack -> postfix expression
 infixToPostfixExpr' :: String -> [ExprElem] -> [ExprElem]
-infixToPostfixExpr' [] expr = expr
-infixToPostfixExpr' ('+' : xs) opStack = infixToPostfixExpr' xs (op : opStack)
-  where
-    op = EEOperator $ OpBinaryOperator Add
-infixToPostfixExpr' x opStack = case reads x :: [(Float, String)] of
-  [(f, xs)] -> op : infixToPostfixExpr' xs opStack
+infixToPostfixExpr' [] opStack = opStack
+infixToPostfixExpr' expr opStack = case findNextOp expr of
+  Just (opStr, restExpr) -> infixToPostfixExpr' restExpr (op : opStack)
     where
-      op = EEFloat $ roundHalfUp f 2
-  _ -> throw $ ExitProgram 84 "Invalid expression"
-
--- 'e',
--- '^',
--- '*',
--- '/',
--- '%',
--- '+',
--- '-',
--- '>=',
--- '>',
--- '<=',
--- '<',
--- '==',
--- '!=',
--- '&&',
--- '||',
--- '!',
+      op = case parseBinaryOp opStr of
+        Nothing -> throw $ ExitProgram 84 "Invalid operator"
+        Just op' -> op'
+  Nothing -> case reads expr :: [(Float, String)] of
+    [(f, xs)] -> op : infixToPostfixExpr' xs opStack
+      where
+        op = EEFloat $ roundHalfUp f 2
+    _ -> throw $ ExitProgram 84 "Invalid expression"
 
 infixToPostfixExpr :: String -> [ExprElem]
 infixToPostfixExpr expr = infixToPostfixExpr' expr []

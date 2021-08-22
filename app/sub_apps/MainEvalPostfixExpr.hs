@@ -18,5 +18,5 @@ main = handleExitProgram $ do
   case args of
     [exprStr] -> case readMaybe exprStr of
       Just expr -> printf "%.2f\n" (evalPostfixExpr expr)
-      _ -> throw $ ExitProgram 84 "Invalid expression"
+      _ -> throw $ ExitProgram 84 "Can not parse expression"
     _ -> throw $ ExitProgram 84 "Usage: ./funEvalPostfixExpr <expr>"

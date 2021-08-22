@@ -13,5 +13,5 @@ main :: IO ()
 main = handleExitProgram $ do
   args <- getArgs
   case args of
-    [expr] -> putStrLn $ infixToPostfixExpr expr
+    [expr] -> print $ infixToPostfixExpr expr
     _ -> throw $ ExitProgram 84 "Usage: ./funInfixToPostfixExpr <expr>"

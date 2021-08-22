@@ -1,6 +1,12 @@
 module MainEvalPostfixExpr where
 
-import Lib ( someFunc )
+import EvalPostfixExpr (evalPostfixExpr)
+import System.Environment (getArgs)
+import Text.Printf (printf)
 
 main :: IO ()
-main = someFunc
+main = do
+  args <- getArgs
+  case args of
+    [expr] -> printf "%.2f\n" (evalPostfixExpr expr)
+    _ -> putStrLn "Usage: ./funEvalPostfixExpr <expr>"

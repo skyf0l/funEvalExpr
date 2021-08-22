@@ -1,6 +1,11 @@
 module MainInfixToPostfixExpr where
 
-import Lib ( someFunc )
+import InfixToPostfixExpr (infixToPostfixExpr)
+import System.Environment (getArgs)
 
 main :: IO ()
-main = someFunc
+main = do
+  args <- getArgs
+  case args of
+    [expr] -> putStrLn $ infixToPostfixExpr expr
+    _ -> putStrLn "Usage: ./funInfixToPostfixExpr <expr>"

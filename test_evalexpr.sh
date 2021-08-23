@@ -54,10 +54,16 @@ function test_evalexpr_error_handling() {
 echo -e "$BOLD""Test error handling""$UNBOLD"
 test_evalexpr_error_handling ""
 test_evalexpr_error_handling "+"
-test_evalexpr_error_handling "2+"
 test_evalexpr_error_handling "2**2"
 test_evalexpr_error_handling "(2"
 test_evalexpr_error_handling "2)"
+test_evalexpr_error_handling "2+"
+test_evalexpr_error_handling "2*"
+test_evalexpr_error_handling "2+*"
+test_evalexpr_error_handling "2+*)"
+test_evalexpr_error_handling "2*(2"
+test_evalexpr_error_handling "2*(2+*)"
+test_evalexpr_error_handling "+*/dqvsd5v9+/*ergaze-/f7-zef+sdv59qc+sd4vq"
 
 # result
 echo -e "\n$BOLD""Test result""$UNBOLD"

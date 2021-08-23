@@ -11,6 +11,7 @@ import HandleExitProgram
   )
 import Operators
   ( BinaryOperator (..),
+    Delimiter (..),
     ExprElem (..),
     Operator (..),
     UnaryOperator (..),

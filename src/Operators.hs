@@ -4,6 +4,7 @@ module Operators
   ( UnaryOperator (..),
     BinaryOperator (..),
     Operator (..),
+    Delimiter (..),
     ExprElem (..),
     evalBinaryOperator,
     evalUnaryOperator,
@@ -57,9 +58,15 @@ instance Show Operator where
   show (OpUnaryOperator op) = show op
   show (OpBinaryOperator op) = show op
 
+data Delimiter
+  = Open
+  | Close
+  deriving (Eq, Show, Data, Typeable, Read)
+
 data ExprElem
   = EEFloat Float
   | EEOperator Operator
+  | EEDelimiter Delimiter
   deriving (Eq, Data, Typeable)
 
 instance Read ExprElem where
@@ -72,6 +79,7 @@ instance Read ExprElem where
 instance Show ExprElem where
   show (EEFloat f) = printf "%.2f" f
   show (EEOperator op) = show op
+  show (EEDelimiter op) = show op
 
 getOperatorPrecedence :: Operator -> Int
 getOperatorPrecedence (OpBinaryOperator Exp) = 120
@@ -155,6 +163,11 @@ parseBinaryOp "!=" = Just $ EEOperator $ OpBinaryOperator Ne
 parseBinaryOp "&&" = Just $ EEOperator $ OpBinaryOperator And
 parseBinaryOp "||" = Just $ EEOperator $ OpBinaryOperator Or
 parseBinaryOp _ = Nothing
+
+parseDelimiter :: String -> Maybe ExprElem
+parseDelimiter "(" = Just $ EEDelimiter Open
+parseDelimiter ")" = Just $ EEDelimiter Close
+parseDelimiter _ = Nothing
 
 findNextOp :: String -> Maybe (String, String)
 findNextOp ('(' : xs) = Just ("(", xs)

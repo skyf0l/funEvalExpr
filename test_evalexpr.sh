@@ -12,21 +12,27 @@ if [ "$#" = 0 ]; then
 fi
 binary="$@"
 
+count_test_passed=0
+count_test_failed=0
+
 function test_evalexpr() {
     result=$($binary "$1")
     exit_value=$?
     if [ $exit_value = 0 ]; then
         if [ "$result" = "$2" ]; then
             echo -e "$OK '$1' = '$2'"
+            count_test_passed=$((count_test_passed + 1))
         else
             echo -e "$KO '$1'"
             echo -e "\tgot '$result'"
             echo -e "\texpecetd '$2'"
+            count_test_failed=$((count_test_failed + 1))
         fi
     else
         echo -e "$KO '$1'"
         echo -e "\texit with '$exit_value'"
         echo -e "\texpected '0'"
+        count_test_failed=$((count_test_failed + 1))
     fi
 }
 
@@ -35,10 +41,12 @@ function test_evalexpr_error_handling() {
     exit_value=$?
     if [ $exit_value = 84 ]; then
         echo -e "$OK '$1'"
+        count_test_passed=$((count_test_passed + 1))
     else
         echo -e "$KO '$1'"
         echo -e "\texit with '$exit_value'"
         echo -e "\texpected '84'"
+        count_test_failed=$((count_test_failed + 1))
     fi
 }
 
@@ -189,3 +197,7 @@ test_evalexpr "5 > 4" 1.00
 test_evalexpr "1 <= 1" 1.00
 test_evalexpr "5 > 4 && 1 <= 1" 1.00
 test_evalexpr "5.0 <= 4.9 || !(4 > 3.5)" 0.00
+
+echo
+echo -e "$BOLD""$count_test_passed tests passed""$UNBOLD"
+echo -e "$BOLD""$count_test_failed tests failed""$UNBOLD"

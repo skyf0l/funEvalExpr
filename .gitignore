@@ -1,6 +1,5 @@
 # stack
 .stack-work/
-*.cabal
 
 # binaries
 funEvalExpr

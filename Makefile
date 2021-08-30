@@ -14,8 +14,5 @@ re:
 	@$(MAKE) -s fclean
 	@$(MAKE) -s all
 
-tests_run:
-	@stack test
-
-functional_tests_run:
+tests_run: all
 	@./test_evalexpr.sh ./funEvalExpr

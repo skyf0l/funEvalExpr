@@ -18,4 +18,4 @@ tests_run:
 	@stack test
 
 functional_tests_run:
-	@./functional_tests_run.sh
+	@./test_evalexpr.sh ./funEvalExpr

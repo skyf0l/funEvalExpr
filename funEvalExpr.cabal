@@ -1,0 +1,77 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: ddfedc8cf0961561f94425cd6d170a4ae718394e2d00ffa236efc7db87bc5e84
+
+name:           funEvalExpr
+version:        1
+description:    Please see the README on GitHub at <https://github.com/skyf0l/funEvalExpr#readme>
+homepage:       https://github.com/skyf0l/funEvalExpr#readme
+bug-reports:    https://github.com/skyf0l/funEvalExpr/issues
+author:         Skyf0l
+maintainer:     tom.rorato@epitech.eu
+copyright:      2021 Skyf0l
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/skyf0l/funEvalExpr
+
+library
+  exposed-modules:
+      EvalPostfixExpr
+      HandleExitProgram
+      InfixToPostfixExpr
+      Operators
+  other-modules:
+      Paths_funEvalExpr
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable funEvalExpr
+  main-is: MainEvalExpr.hs
+  other-modules:
+      Paths_funEvalExpr
+  hs-source-dirs:
+      app
+  ghc-options: -main-is MainEvalExpr -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , funEvalExpr
+  default-language: Haskell2010
+
+executable funEvalPostfixExpr
+  main-is: MainEvalPostfixExpr.hs
+  other-modules:
+      MainInfixToPostfixExpr
+      Paths_funEvalExpr
+  hs-source-dirs:
+      app/sub_apps
+  ghc-options: -main-is MainEvalPostfixExpr -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , funEvalExpr
+  default-language: Haskell2010
+
+executable funInfixToPostfixExpr
+  main-is: MainInfixToPostfixExpr.hs
+  other-modules:
+      MainEvalPostfixExpr
+      Paths_funEvalExpr
+  hs-source-dirs:
+      app/sub_apps
+  ghc-options: -main-is MainInfixToPostfixExpr -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , funEvalExpr
+  default-language: Haskell2010

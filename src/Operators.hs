@@ -8,6 +8,7 @@ module Operators
     ExprElem (..),
     evalBinaryOperator,
     evalUnaryOperator,
+    parseOp,
     parseUnaryOp,
     parseBinaryOp,
     findNextOp,
@@ -168,6 +169,17 @@ parseDelimiter :: String -> Maybe ExprElem
 parseDelimiter "(" = Just $ EEDelimiter Open
 parseDelimiter ")" = Just $ EEDelimiter Close
 parseDelimiter _ = Nothing
+
+-- op -> isUnary -> (exprElem, isUnary)
+parseOp :: String -> Bool -> Maybe (ExprElem, Bool)
+parseOp "(" _ = Just (EEDelimiter Open, True)
+parseOp ")" _ = Just (EEDelimiter Close, False)
+parseOp op True = case parseUnaryOp op of
+  Just op' -> Just (op', True)
+  Nothing -> Nothing
+parseOp op False = case parseBinaryOp op of
+  Just op' -> Just (op', True)
+  Nothing -> Nothing
 
 findNextOp :: String -> Maybe (String, String)
 findNextOp ('(' : xs) = Just ("(", xs)

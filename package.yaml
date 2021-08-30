@@ -12,7 +12,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/funEvalExpr#readme>
+description:         Please see the README on GitHub at <https://github.com/skyf0l/funEvalExpr#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -26,6 +26,9 @@ executables:
     source-dirs:         app
     ghc-options:
     - -main-is MainEvalExpr
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
     dependencies:
     - funEvalExpr
 
@@ -34,6 +37,9 @@ executables:
     source-dirs:         app/sub_apps
     ghc-options:
     - -main-is MainInfixToPostfixExpr
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
     dependencies:
     - funEvalExpr
 
@@ -42,5 +48,8 @@ executables:
     source-dirs:         app/sub_apps
     ghc-options:
     - -main-is MainEvalPostfixExpr
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
     dependencies:
     - funEvalExpr

@@ -35,7 +35,7 @@ popOpStackWhilePriorited :: Operator -> [ExprElem] -> ([ExprElem], [ExprElem])
 popOpStackWhilePriorited _ [] = ([], [])
 popOpStackWhilePriorited op (EEDelimiter Open : xs) = (EEDelimiter Open : xs, [])
 popOpStackWhilePriorited op (EEOperator op' : xs) =
-  case getOperatorPrecedence op < getOperatorPrecedence op' of
+  case getOperatorPrecedence op <= getOperatorPrecedence op' of
     False -> (EEOperator op' : xs, [])
     True -> (opStack, EEOperator op' : expr)
       where
@@ -49,17 +49,26 @@ infixToPostfix [] [] = []
 infixToPostfix [] opStack = opStack
 -- insert operand
 infixToPostfix (EEFloat f : xs) opStack = EEFloat f : infixToPostfix xs opStack
+-- insert unary operator
+infixToPostfix (EEOperator (OpUnaryOperator op) : xs) opStack = after
+  where
+    op' = EEOperator (OpUnaryOperator op)
+    opStack' = op' : opStack
+    after = infixToPostfix xs opStack'
 -- process over parenthesis
-infixToPostfix (EEDelimiter Open : xs) opStack = infixToPostfix xs opStack'
+infixToPostfix (EEDelimiter Open : xs) opStack = after
   where
     opStack' = EEDelimiter Open : opStack
-infixToPostfix (EEDelimiter Close : xs) opStack = expr ++ infixToPostfix xs opStack'
+    after = infixToPostfix xs opStack'
+infixToPostfix (EEDelimiter Close : xs) opStack = after
   where
     (opStack', expr) = popOpStackUntilOpen opStack
+    after = expr ++ infixToPostfix xs opStack'
 -- process over operators
-infixToPostfix (EEOperator op : xs) opStack = expr ++ infixToPostfix xs (EEOperator op : opStack')
+infixToPostfix (EEOperator op : xs) opStack = after
   where
     (opStack', expr) = popOpStackWhilePriorited op opStack
+    after = expr ++ infixToPostfix xs (EEOperator op : opStack')
 
 -- string expression -> next op is unary operator -> postfix expression (rev)
 stringToInfixExpr :: String -> Bool -> [ExprElem]

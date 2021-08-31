@@ -37,9 +37,9 @@ popOpStackUntilOpen (op : xs) = (opStack, op : expr)
 -- op -> op stack -> (remaining op stack, to append to expr)
 popOpStackWhilePriorited :: Operator -> [ExprElem] -> ([ExprElem], [ExprElem])
 popOpStackWhilePriorited _ [] = ([], [])
-popOpStackWhilePriorited op (EEDelimiter Open : xs) = (xs, [])
+popOpStackWhilePriorited op (EEDelimiter Open : xs) = (EEDelimiter Open : xs, [])
 popOpStackWhilePriorited op (EEOperator op' : xs) =
-  case getOperatorPrecedence op <= getOperatorPrecedence op' of
+  case getOperatorPrecedence op < getOperatorPrecedence op' of
     False -> (EEOperator op' : xs, [])
     True -> (opStack, EEOperator op' : expr)
       where
@@ -57,7 +57,7 @@ infixToPostfix (EEFloat f : xs) opStack = EEFloat f : infixToPostfix xs opStack
 infixToPostfix (EEDelimiter Open : xs) opStack = infixToPostfix xs opStack'
   where
     opStack' = EEDelimiter Open : opStack
-infixToPostfix (EEDelimiter Close : xs) opStack = infixToPostfix xs $ opStack' ++ opStack
+infixToPostfix (EEDelimiter Close : xs) opStack = expr ++ infixToPostfix xs opStack'
   where
     (opStack', expr) = popOpStackUntilOpen opStack
 -- process over operators

@@ -28,8 +28,8 @@ roundHalfUp n d = fromInteger (round $ n * multiplier) / multiplier
 -- infix expression -> operator stack -> postfix expression
 infixToPostfix :: [ExprElem] -> [ExprElem] -> [ExprElem]
 infixToPostfix [] opStack = opStack
-infixToPostfix (op : xs) [] = infixToPostfix xs [op]
 infixToPostfix (EEFloat f : xs) opStack = EEFloat f : infixToPostfix xs opStack
+infixToPostfix (op : xs) [] = infixToPostfix xs [op]
 infixToPostfix (EEDelimiter Open : xs) opStack = infixToPostfix xs opStack
 infixToPostfix (EEDelimiter Close : xs) opStack = infixToPostfix xs opStack
 infixToPostfix (op : xs) opStack = infixToPostfix xs $ op : opStack

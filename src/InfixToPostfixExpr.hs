@@ -1,5 +1,6 @@
 module InfixToPostfixExpr
   ( infixToPostfixExpr,
+    roundHalfUp,
   )
 where
 
@@ -9,6 +10,7 @@ import HandleExitProgram
     handleExitProgram,
     throw,
   )
+import Maths (roundHalfUp)
 import Operators
   ( BinaryOperator (..),
     Delimiter (..),
@@ -19,12 +21,6 @@ import Operators
     getOperatorPrecedence,
     parseOp,
   )
-
--- number -> expected decimal digits -> result
-roundHalfUp :: Float -> Int -> Float
-roundHalfUp n d = fromInteger (round $ n * multiplier) / multiplier
-  where
-    multiplier = 10 ^ d
 
 -- op stack -> (remaining op stack, expr)
 popOpStackUntilOpen :: [ExprElem] -> ([ExprElem], [ExprElem])

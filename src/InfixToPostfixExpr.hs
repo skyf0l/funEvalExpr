@@ -16,6 +16,7 @@ import Operators
     Operator (..),
     UnaryOperator (..),
     findNextOp,
+    getOperatorPrecedence,
     parseOp,
   )
 
@@ -63,6 +64,7 @@ stringToInfixExpr expr isUnary = case findNextOp expr of
     _ -> throw $ ExitProgram 84 "Invalid expression"
 
 infixToPostfixExpr :: String -> [ExprElem]
-infixToPostfixExpr expr = infixToPostfix infixExpr []
+infixToPostfixExpr expr = reverse postfixExpr
   where
     infixExpr = stringToInfixExpr expr True
+    postfixExpr = infixToPostfix infixExpr []

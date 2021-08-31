@@ -26,19 +26,21 @@ roundHalfUp n d = fromInteger (round $ n * multiplier) / multiplier
     multiplier = 10 ^ d
 
 -- infix expression -> operator stack -> postfix expression
--- infixToPostfixExpr' :: [ExprElem] -> [ExprElem] -> [ExprElem]
--- infixToPostfixExpr' [] opStack = opStack
--- infixToPostfixExpr' expr opStack = case findNextOp expr of
---   Just (opStr, restExpr) -> infixToPostfixExpr' restExpr (op : opStack)
---     where
---       op = case parseBinaryOp opStr of
---         Nothing -> throw $ ExitProgram 84 "Invalid operator"
---         Just op' -> op'
---   Nothing -> case reads expr :: [(Float, String)] of
---     [(f, xs)] -> op : infixToPostfixExpr' xs opStack
---       where
---         op = EEFloat $ roundHalfUp f 2
---     _ -> throw $ ExitProgram 84 "Invalid expression"
+infixToPostfixExpr' :: [ExprElem] -> [ExprElem] -> [ExprElem]
+infixToPostfixExpr' [] opStack = opStack
+infixToPostfixExpr' (EEFloat f : exprs) opStack = after
+  where
+    op = EEFloat f
+    after = op : infixToPostfixExpr' exprs opStack
+infixToPostfixExpr' (EEDelimiter Open : exprs) opStack = after
+  where
+    after = infixToPostfixExpr' exprs opStack
+infixToPostfixExpr' (EEDelimiter Close : exprs) opStack = after
+  where
+    after = infixToPostfixExpr' exprs opStack
+infixToPostfixExpr' (op : exprs) opStack = infixToPostfixExpr' exprs opStack'
+  where
+    opStack' = op : opStack
 
 -- string expression -> next op is unary operator -> postfix expression
 stringToInfixExpr :: String -> Bool -> [ExprElem]
@@ -56,7 +58,6 @@ stringToInfixExpr expr isUnary = case findNextOp expr of
     _ -> throw $ ExitProgram 84 "Invalid expression"
 
 infixToPostfixExpr :: String -> [ExprElem]
--- infixToPostfixExpr expr = infixToPostfixExpr' infixExpr []
-infixToPostfixExpr expr = infixExpr
+infixToPostfixExpr expr = infixToPostfixExpr' infixExpr []
   where
     infixExpr = stringToInfixExpr expr True

@@ -32,6 +32,9 @@ infixToPostfixExpr' (EEFloat f : exprs) opStack = after
   where
     op = EEFloat f
     after = op : infixToPostfixExpr' exprs opStack
+infixToPostfixExpr' (op : exprs) [] = infixToPostfixExpr' exprs opStack
+  where
+    opStack = [op]
 infixToPostfixExpr' (EEDelimiter Open : exprs) opStack = after
   where
     after = infixToPostfixExpr' exprs opStack

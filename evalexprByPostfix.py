@@ -117,28 +117,28 @@ def infixToPostfix(infixExpression):
         if m:
             op = m.group(1)
             infixExpression = infixExpression[len(op):]
-            postfixExpression.append(round_half_up(float(op), 2))
+            postfixExpression.insert(0, round_half_up(float(op), 2))
         else:
             op = findNextOp(infixExpression)
             infixExpression = infixExpression[len(op):]
             if (not lastOp or lastOp == '(' or isOperator(lastOp)) and op in unaryOperators:
-                operatorStack.append(unaryOperators[op])
+                operatorStack.insert(0, unaryOperators[op])
             else:
                 if op == '(':
-                    operatorStack.append(op)
+                    operatorStack.insert(0, op)
                 elif op == ')':
-                    while operatorStack[-1] != '(':
-                        postfixExpression.append(operatorStack.pop(-1))
-                    operatorStack.pop(-1)
+                    while operatorStack[0] != '(':
+                        postfixExpression.insert(0, operatorStack.pop(0))
+                    operatorStack.pop(0)
                 else:
-                    while operatorStack and operatorStack[-1] != '(' and isOpPriorited(operatorStack[-1], op):
-                        postfixExpression.append(operatorStack.pop(-1))
-                    operatorStack.append(op)
+                    while operatorStack and operatorStack[0] != '(' and isOpPriorited(operatorStack[0], op):
+                        postfixExpression.insert(0, operatorStack.pop(0))
+                    operatorStack.insert(0, op)
         lastOp = op
 
     while operatorStack:
-        postfixExpression.append(operatorStack.pop(-1))
-    return postfixExpression
+        postfixExpression.insert(0, operatorStack.pop(0))
+    return postfixExpression[::-1]
 
 
 def evalPostfix(postfixExpression):

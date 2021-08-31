@@ -34,20 +34,38 @@ popOpStackUntilOpen (op : xs) = (opStack, op : expr)
   where
     (opStack, expr) = popOpStackUntilOpen xs
 
+-- op -> op stack -> (remaining op stack, to append to expr)
+popOpStackWhilePriorited :: Operator -> [ExprElem] -> ([ExprElem], [ExprElem])
+popOpStackWhilePriorited _ [] = ([], [])
+popOpStackWhilePriorited op (EEDelimiter Open : xs) = (xs, [])
+popOpStackWhilePriorited op (EEOperator op' : xs) =
+  case getOperatorPrecedence op <= getOperatorPrecedence op' of
+    False -> (EEOperator op' : xs, [])
+    True -> (opStack, EEOperator op' : expr)
+      where
+        (opStack, expr) = popOpStackWhilePriorited op xs
+popOpStackWhilePriorited _ _ = throw $ ExitProgram 84 "Unexpected end of expression"
+
 -- infix expression -> operator stack -> postfix expression
 infixToPostfix :: [ExprElem] -> [ExprElem] -> [ExprElem]
+-- return op stack
+infixToPostfix [] [] = []
 infixToPostfix [] opStack = opStack
+-- insert operand
 infixToPostfix (EEFloat f : xs) opStack = EEFloat f : infixToPostfix xs opStack
+-- process over parenthesis
 infixToPostfix (EEDelimiter Open : xs) opStack = infixToPostfix xs opStack'
   where
-    op = EEDelimiter Open
-    opStack' = op : opStack
-infixToPostfix (EEDelimiter Close : xs) opStack = infixToPostfix expr $ opStack' ++ opStack
+    opStack' = EEDelimiter Open : opStack
+infixToPostfix (EEDelimiter Close : xs) opStack = infixToPostfix xs $ opStack' ++ opStack
   where
-    (opStack', expr) = popOpStackUntilOpen xs
-infixToPostfix (op : xs) opStack = infixToPostfix xs $ op : opStack
+    (opStack', expr) = popOpStackUntilOpen opStack
+-- process over operators
+infixToPostfix (EEOperator op : xs) opStack = expr ++ infixToPostfix xs (EEOperator op : opStack')
+  where
+    (opStack', expr) = popOpStackWhilePriorited op opStack
 
--- string expression -> next op is unary operator -> postfix expression
+-- string expression -> next op is unary operator -> postfix expression (rev)
 stringToInfixExpr :: String -> Bool -> [ExprElem]
 stringToInfixExpr "" _ = []
 stringToInfixExpr (' ' : xs) isUnary = stringToInfixExpr xs isUnary
@@ -64,7 +82,7 @@ stringToInfixExpr expr isUnary = case findNextOp expr of
     _ -> throw $ ExitProgram 84 "Invalid expression"
 
 infixToPostfixExpr :: String -> [ExprElem]
-infixToPostfixExpr expr = reverse postfixExpr
+infixToPostfixExpr expr = postfixExpr
   where
     infixExpr = stringToInfixExpr expr True
     postfixExpr = infixToPostfix infixExpr []

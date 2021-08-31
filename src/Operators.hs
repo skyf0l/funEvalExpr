@@ -12,6 +12,7 @@ module Operators
     parseUnaryOp,
     parseBinaryOp,
     findNextOp,
+    getOperatorPrecedence,
   )
 where
 

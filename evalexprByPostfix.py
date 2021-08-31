@@ -123,11 +123,8 @@ def infixToPostfix(infixExpression):
             infixExpression = infixExpression[len(op):]
             if (not lastOp or lastOp == '(' or isOperator(lastOp)) and op in unaryOperators:
                 operatorStack.append(unaryOperators[op])
-            elif not operatorStack or operatorStack[-1] == '(':
-                if op == ')':
-                    operatorStack.pop(-1)
-                else:
-                    operatorStack.append(op)
+            elif not operatorStack:
+                operatorStack.append(op)
             else:
                 if op == '(':
                     operatorStack.append(op)

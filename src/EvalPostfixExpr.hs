@@ -25,7 +25,7 @@ evalPostfixExpr' (EEFloat f : xs) stack = evalPostfixExpr' xs (f : stack)
 evalPostfixExpr' (EEOperator (OpUnaryOperator op) : xs) (x : stack) =
   evalPostfixExpr' xs (evalUnaryOperator op x : stack)
 evalPostfixExpr' (EEOperator (OpBinaryOperator op) : xs) (x : y : stack) =
-  evalPostfixExpr' xs (evalBinaryOperator op x y : stack)
+  evalPostfixExpr' xs (evalBinaryOperator op y x : stack)
 evalPostfixExpr' _ _ = throw $ ExitProgram 84 "Invalid expression"
 
 evalPostfixExpr :: [ExprElem] -> Float

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: fcc1c09fd666f719a218ad951a753f659449d2e37d678261ec15c7171b467540
+-- hash: 0d3a7d93ff26b51c47d50f0278a097fa1d53e6d9ad57549406ef66ed27ff9448
 
 name:           funEvalExpr
 version:        1
@@ -26,7 +26,6 @@ source-repository head
 
 library
   exposed-modules:
-      CombinatorialParser
       EvalPostfixExpr
       HandleExitProgram
       InfixToPostfixExpr

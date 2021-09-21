@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e3556bce250b005f9d362e6f35537dbe6c1930562505758e0c0efaf5c6a27d19
+-- hash: fcc1c09fd666f719a218ad951a753f659449d2e37d678261ec15c7171b467540
 
 name:           funEvalExpr
 version:        1
@@ -26,8 +26,12 @@ source-repository head
 
 library
   exposed-modules:
+      CombinatorialParser
+      EvalPostfixExpr
       HandleExitProgram
+      InfixToPostfixExpr
       Maths
+      Operators
   other-modules:
       Paths_funEvalExpr
   hs-source-dirs:
@@ -43,6 +47,32 @@ executable funEvalExpr
   hs-source-dirs:
       app
   ghc-options: -main-is MainEvalExpr -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , funEvalExpr
+  default-language: Haskell2010
+
+executable funEvalPostfixExpr
+  main-is: MainEvalPostfixExpr.hs
+  other-modules:
+      MainInfixToPostfixExpr
+      Paths_funEvalExpr
+  hs-source-dirs:
+      app/sub_apps
+  ghc-options: -main-is MainEvalPostfixExpr -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , funEvalExpr
+  default-language: Haskell2010
+
+executable funInfixToPostfixExpr
+  main-is: MainInfixToPostfixExpr.hs
+  other-modules:
+      MainEvalPostfixExpr
+      Paths_funEvalExpr
+  hs-source-dirs:
+      app/sub_apps
+  ghc-options: -main-is MainInfixToPostfixExpr -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
     , funEvalExpr

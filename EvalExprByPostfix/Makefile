@@ -7,6 +7,8 @@ clean:
 fclean: clean
 	@stack purge
 	@rm -f ./funEvalExpr
+	@rm -f ./funEvalPostfixExpr
+	@rm -f ./funInfixToPostfixExpr
 
 re:
 	@$(MAKE) -s fclean

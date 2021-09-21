@@ -31,3 +31,25 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - funEvalExpr
+
+  funInfixToPostfixExpr:
+    main:                MainInfixToPostfixExpr.hs
+    source-dirs:         app/sub_apps
+    ghc-options:
+    - -main-is MainInfixToPostfixExpr
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - funEvalExpr
+
+  funEvalPostfixExpr:
+    main:                MainEvalPostfixExpr.hs
+    source-dirs:         app/sub_apps
+    ghc-options:
+    - -main-is MainEvalPostfixExpr
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - funEvalExpr

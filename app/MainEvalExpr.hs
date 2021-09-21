@@ -2,6 +2,9 @@ module MainEvalExpr where
 
 import Ast
   ( AST (..),
+    BinaryOperator (..),
+    Operator (..),
+    UnaryOperator (..),
   )
 import CombinatorialParser
 import HandleExitProgram
@@ -24,10 +27,16 @@ parseOperator :: String -> (a -> a -> a) -> Parser (a -> a -> a)
 parseOperator x f = reserved x >> return f
 
 parseAddAndSub :: Parser (AST -> AST -> AST)
-parseAddAndSub = (parseOperator "+" OpAdd) <|> (parseOperator "-" OpSub)
+parseAddAndSub = (parseOperator "+" opAdd) <|> (parseOperator "-" opSub)
+  where
+    opAdd = \a b -> Operator $ BinaryOperator $ Add a b
+    opSub = \a b -> Operator $ BinaryOperator $ Sub a b
 
 parseMulAndDiv :: Parser (AST -> AST -> AST)
-parseMulAndDiv = (parseOperator "*" OpMul) <|> (parseOperator "/" OpDiv)
+parseMulAndDiv = (parseOperator "*" opMul) <|> (parseOperator "/" opDiv)
+  where
+    opMul = \a b -> Operator $ BinaryOperator $ Mul a b
+    opDiv = \a b -> Operator $ BinaryOperator $ Div a b
 
 parseAst :: Parser AST
 parseAst = parseTerm `chainl1` parseAddAndSub
@@ -43,10 +52,10 @@ astParser = runParser parseAst
 
 eval :: AST -> Float
 eval (Operand n) = n
-eval (OpAdd a b) = eval a + eval b
-eval (OpSub a b) = eval a - eval b
-eval (OpMul a b) = eval a * eval b
-eval (OpDiv a b) = eval a / eval b
+eval (Operator (BinaryOperator (Add a b))) = eval a + eval b
+eval (Operator (BinaryOperator (Sub a b))) = eval a - eval b
+eval (Operator (BinaryOperator (Mul a b))) = eval a * eval b
+eval (Operator (BinaryOperator (Div a b))) = eval a / eval b
 
 main :: IO ()
 main = handleExitProgram $ do

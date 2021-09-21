@@ -1,11 +1,17 @@
 {-# OPTIONS_GHC -Wno-missing-methods #-}
 
 -- Combinatorial parser library
-module CombinatorialParser () where
+module CombinatorialParser
+  ( module CombinatorialParser,
+    module Control.Applicative,
+    module Control.Monad,
+  )
+where
 
 import Control.Applicative (Alternative (..))
 import Control.Monad (MonadPlus (..))
-import Data.Char (isDigit)
+import Data.Char (isDigit, isLower)
+import GHC.Num (Natural)
 
 newtype Parser a = Parser {parse :: String -> [(a, String)]}
 
@@ -42,15 +48,26 @@ p1 <* p2 = const <$> p1 <*> p2
 p1 *> p2 = (\_ x -> x) <$> p1 <*> p2
 
 instance Monad Parser where
+  return = pure
+
   -- Bind
-  (>>=) p f = Parser $ \s -> concatMap (\(a, s') -> parse (f a) s') $ parse p s
+  p >>= f = Parser $ \s -> concatMap (\(a, s') -> parse (f a) s') $ parse p s
+
+instance MonadPlus Parser where
+  mzero = Parser (const [])
+  mplus p1 p2 = Parser (\s -> parse p1 s ++ parse p2 s)
 
 instance Alternative Parser where
+  empty = mzero
+
   -- Or <|>
-  (<|>) p1 p2 = Parser $ \s ->
+  p1 <|> p2 = Parser $ \s ->
     case parse p1 s of
       [] -> parse p2 s
       res -> res
+
+-- Many -> one or more
+-- Some -> zero or more
 
 -- Check if item match predicate
 satisfy :: (Char -> Bool) -> Parser Char
@@ -84,9 +101,20 @@ p `chainl1` op = do
 char :: Char -> Parser Char
 char c = satisfy (c ==)
 
--- \d+
-natural :: Parser Integer
-natural = read <$> some (satisfy isDigit)
+-- \d
+digit :: Parser Char
+digit = satisfy isDigit
+
+-- \s
+spaces :: Parser String
+spaces = many $ oneOf " \n\r"
+
+-- .*[^\d]
+token :: Parser a -> Parser a
+token p = do
+  a <- p
+  spaces
+  pure a
 
 -- .*
 string :: String -> Parser String
@@ -97,30 +125,8 @@ string (c : cs) = do
   pure (c : cs)
 
 -- .*[^\d]
-token :: Parser a -> Parser a
-token p = do
-  a <- p
-  spaces
-  pure a
-
--- .*[^\d]
 reserved :: String -> Parser String
 reserved s = token (string s)
-
--- \s
-spaces :: Parser String
-spaces = many $ oneOf " \n\r"
-
--- \d
-digit :: Parser Char
-digit = satisfy isDigit
-
--- \-?\d+
-number :: Parser Int
-number = do
-  s <- string "-" <|> pure []
-  cs <- some digit
-  pure $ read (s ++ cs)
 
 -- \(.*\)
 parens :: Parser a -> Parser a
@@ -129,3 +135,22 @@ parens m = do
   n <- m
   reserved ")"
   pure n
+
+-- \d+ as integer
+unsignedInteger :: Parser Integer
+unsignedInteger = read <$> some digit
+
+-- \-?\d+ as integer
+integer :: Parser Integer
+integer = do
+  s <- string "-" <|> pure []
+  n <- some digit
+  pure $ read (s ++ n)
+
+-- \d+\.?\d* as float
+unsignedFloat :: Parser Float
+unsignedFloat = do
+  n <- some digit
+  d <- string "." <|> pure []
+  n' <- many digit
+  pure $ read (n ++ d ++ n')

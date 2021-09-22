@@ -20,12 +20,22 @@ import Text.Printf (printf)
 
 parseOperand :: ReadP AST
 parseOperand = do
-  n <- float
+  n <- unsignedFloat
   skipSpaces
   pure $ Operand n
 
 parseOperator :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 parseOperator x f = reserved x >> pure f
+
+parseAdd :: ReadP (AST -> AST -> AST)
+parseAdd = parseOperator "+" opAdd
+  where
+    opAdd = \a b -> Operator $ BinaryOperator $ Add a b
+
+parseSub :: ReadP (AST -> AST -> AST)
+parseSub = parseOperator "-" opSub
+  where
+    opSub = \a b -> Operator $ BinaryOperator $ Sub a b
 
 parseAddAndSub :: ReadP (AST -> AST -> AST)
 parseAddAndSub = parseOperator "+" opAdd <|> parseOperator "-" opSub
@@ -40,18 +50,18 @@ parseMulAndDiv = parseOperator "*" opMul <|> parseOperator "/" opDiv <|> parseOp
     opDiv = \a b -> Operator $ BinaryOperator $ Div a b
     opMod = \a b -> Operator $ BinaryOperator $ Mod a b
 
-parseAst :: ReadP AST
-parseAst = parseTerm `chainl1` parseAddAndSub
+parseExpr :: ReadP AST
+parseExpr = parseTerm `chainl1` parseAddAndSub
 
 parseTerm :: ReadP AST
 parseTerm = parseFactor `chainl1` parseMulAndDiv
 
 parseFactor :: ReadP AST
-parseFactor = parseOperand <|> parens parseAst
+parseFactor = parseOperand <|> parens parseExpr
 
 maybeAstParser :: String -> Maybe AST
-maybeAstParser s = case readP_to_S parseAst s of
-  [(ast, "")] -> Just ast
+maybeAstParser s = case readP_to_S parseExpr s of
+  [(ast, _)] -> Just ast
   _ -> Nothing
 
 eval :: AST -> Float

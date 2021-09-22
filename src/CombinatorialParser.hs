@@ -20,9 +20,6 @@ import Text.ParserCombinators.ReadP
 -- Many -> zero or more
 -- Many1 -> one or more
 
-some :: ReadP a -> ReadP [a]
-some = many
-
 -- Check if item match predicate
 
 oneOf :: [Char] -> ReadP Char
@@ -36,14 +33,11 @@ digit = satisfy isDigit
 
 -- \s+
 spaces :: ReadP String
-spaces = some $ oneOf " \n\r"
+spaces = many $ oneOf " \n\r"
 
 -- .*[^\s]
 token :: ReadP a -> ReadP a
-token p = do
-  a <- p
-  skipSpaces
-  pure a
+token p = p <* skipSpaces
 
 -- .*[^\s]
 reserved :: String -> ReadP String
@@ -51,36 +45,35 @@ reserved s = token (string s)
 
 -- \(.*\)
 parens :: ReadP a -> ReadP a
-parens m = do
-  reserved "("
-  n <- m
-  reserved ")"
-  pure n
+parens m = reserved "(" *> m <* reserved ")"
 
 -- \-?\d+ as integer
 integer :: ReadP Integer
-integer = do
-  s <- string "-" <|> pure []
-  n <- many1 digit
-  pure $ read (s ++ n)
+integer =
+  read
+    <$> ( string "-" <|> pure []
+            +++ many1 digit
+        )
 
 -- \d+ as integer
 unsignedInteger :: ReadP Integer
-unsignedInteger = read <$> some digit
+unsignedInteger = read <$> many1 digit
 
 -- \-?\d+\.?\d* as float
 float :: ReadP Float
-float = do
-  s <- string "-" <|> pure []
-  n <- many1 digit
-  d <- string "." <|> pure []
-  n' <- some digit
-  pure $ read (s ++ n ++ d ++ n')
+float =
+  read
+    <$> ( string "-" <|> pure []
+            +++ many1 digit
+            +++ string "." <|> pure []
+            +++ many digit
+        )
 
 -- \d+\.?\d* as float
 unsignedFloat :: ReadP Float
 unsignedFloat = do
-  n <- many1 digit
-  d <- string "." <|> pure []
-  n' <- some digit
-  pure $ read (n ++ d ++ n')
+  read
+    <$> ( many1 digit
+            +++ string "." <|> pure []
+            +++ many digit
+        )

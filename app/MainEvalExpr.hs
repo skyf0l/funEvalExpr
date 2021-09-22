@@ -7,6 +7,7 @@ import Ast
     UnaryOperator (..),
   )
 import CombinatorialParser
+import Data.Fixed (mod')
 import HandleExitProgram
   ( ExitProgram (..),
     exitWith,
@@ -27,16 +28,17 @@ parseOperator :: String -> (a -> a -> a) -> Parser (a -> a -> a)
 parseOperator x f = reserved x >> return f
 
 parseAddAndSub :: Parser (AST -> AST -> AST)
-parseAddAndSub = (parseOperator "+" opAdd) <|> (parseOperator "-" opSub)
+parseAddAndSub = parseOperator "+" opAdd <|> parseOperator "-" opSub
   where
     opAdd = \a b -> Operator $ BinaryOperator $ Add a b
     opSub = \a b -> Operator $ BinaryOperator $ Sub a b
 
 parseMulAndDiv :: Parser (AST -> AST -> AST)
-parseMulAndDiv = (parseOperator "*" opMul) <|> (parseOperator "/" opDiv)
+parseMulAndDiv = parseOperator "*" opMul <|> parseOperator "/" opDiv <|> parseOperator "%" opMod
   where
     opMul = \a b -> Operator $ BinaryOperator $ Mul a b
     opDiv = \a b -> Operator $ BinaryOperator $ Div a b
+    opMod = \a b -> Operator $ BinaryOperator $ Mod a b
 
 parseAst :: Parser AST
 parseAst = parseTerm `chainl1` parseAddAndSub
@@ -56,6 +58,7 @@ eval (Operator (BinaryOperator (Add a b))) = eval a + eval b
 eval (Operator (BinaryOperator (Sub a b))) = eval a - eval b
 eval (Operator (BinaryOperator (Mul a b))) = eval a * eval b
 eval (Operator (BinaryOperator (Div a b))) = eval a / eval b
+eval (Operator (BinaryOperator (Mod a b))) = eval a `mod'` eval b
 
 main :: IO ()
 main = handleExitProgram $ do

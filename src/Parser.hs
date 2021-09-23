@@ -3,13 +3,19 @@ module Parser (maybeAstParser) where
 import Ast
 import LibParserCombinators
 
--- Operand and unary operators
+-- Operand/factor and unary operators
 parseOperand :: ReadP AST
 parseOperand = Operand <$> token float
+
+parseFactor :: ReadP AST
+parseFactor = parseUnaryOperator >> (parseOperand <|> parens parseExpr)
 
 -- Unary operators
 wrapUnaryOperator :: String -> (a -> a) -> ReadP (a -> a)
 wrapUnaryOperator x f = reserved x >> pure f
+
+notUnaryOperator :: ReadP (AST -> AST)
+notUnaryOperator = pure id
 
 parsePos :: ReadP (AST -> AST)
 parsePos = wrapUnaryOperator "+" opPos
@@ -27,7 +33,7 @@ parseNot = wrapUnaryOperator "!" opNot
     opNot = Operator . UnaryOperator . Not
 
 parseUnaryOperator :: ReadP (AST -> AST)
-parseUnaryOperator = parsePos <|> parseNeg <|> parseNot
+parseUnaryOperator = parsePos <|> parseNeg <|> parseNot <|> notUnaryOperator
 
 parseUnaryOperators :: ReadP (AST -> AST)
 parseUnaryOperators = parseUnaryOperator >>= \f -> parseUnaryOperators >>= \g -> pure (f . g)
@@ -146,9 +152,6 @@ parseTerm100 = parseTerm120 `chainl1` parseMulDivMod
 -- 120
 parseTerm120 :: ReadP AST
 parseTerm120 = parseFactor `chainl1` parsePowExpr
-
-parseFactor :: ReadP AST
-parseFactor = parseOperand <|> parens parseExpr
 
 maybeAstParser :: String -> Maybe AST
 maybeAstParser s = case readP_to_S (skipSpaces *> parseExpr <* eof) s of

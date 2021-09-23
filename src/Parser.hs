@@ -3,9 +3,34 @@ module Parser (maybeAstParser) where
 import Ast
 import LibParserCombinators
 
--- Operand
+-- Operand and unary operators
 parseOperand :: ReadP AST
 parseOperand = Operand <$> token float
+
+-- Unary operators
+wrapUnaryOperator :: String -> (a -> a) -> ReadP (a -> a)
+wrapUnaryOperator x f = reserved x >> pure f
+
+parsePos :: ReadP (AST -> AST)
+parsePos = wrapUnaryOperator "+" opPos
+  where
+    opPos = Operator . UnaryOperator . Pos
+
+parseNeg :: ReadP (AST -> AST)
+parseNeg = wrapUnaryOperator "-" opNeg
+  where
+    opNeg = Operator . UnaryOperator . Neg
+
+parseNot :: ReadP (AST -> AST)
+parseNot = wrapUnaryOperator "!" opNot
+  where
+    opNot = Operator . UnaryOperator . Not
+
+parseUnaryOperator :: ReadP (AST -> AST)
+parseUnaryOperator = parsePos <|> parseNeg <|> parseNot
+
+parseUnaryOperators :: ReadP (AST -> AST)
+parseUnaryOperators = parseUnaryOperator >>= \f -> parseUnaryOperators >>= \g -> pure (f . g)
 
 -- Binary operators
 wrapBinaryOperator :: String -> (a -> a -> a) -> ReadP (a -> a -> a)

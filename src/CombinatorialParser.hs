@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-missing-methods #-}
 
 -- Combinatorial ReadP library
--- https://hackage.haskell.org/package/base-4.15.0.0/docs/Text-ReadPCombinators-ReadP.html
+-- https://hackage.haskell.org/package/base-4.15.0.0/docs/Text-ParserCombinators-ReadP.html
 
 -- https://two-wrongs.com/parser-combinators-parsing-for-haskell-beginners
 
@@ -47,33 +47,28 @@ reserved s = token (string s)
 parens :: ReadP a -> ReadP a
 parens m = reserved "(" *> m <* reserved ")"
 
--- \-?\d+ as integer
-integer :: ReadP Integer
-integer =
-  read
-    <$> ( string "-" <|> pure []
-            +++ many1 digit
-        )
-
 -- \d+ as integer
 unsignedInteger :: ReadP Integer
-unsignedInteger = read <$> many1 digit
+unsignedInteger = read <$> munch1 isDigit
 
--- \-?\d+\.?\d* as float
-float :: ReadP Float
-float =
-  read
-    <$> ( string "-" <|> pure []
-            +++ many1 digit
-            +++ string "." <|> pure []
-            +++ many digit
-        )
+-- \-?\d+ as integer
+integer :: ReadP Integer
+integer = read <$> i
+  where
+    i = (++) <$> option "" (string "-") <*> munch1 isDigit
 
 -- \d+\.?\d* as float
 unsignedFloat :: ReadP Float
-unsignedFloat = do
-  read
-    <$> ( many1 digit
-            +++ string "." <|> pure []
-            +++ many digit
-        )
+unsignedFloat = read <$> n
+  where
+    i = munch1 isDigit
+    d = option "" ((++) <$> string "." <*> option "0" (munch1 isDigit))
+    n = (++) <$> i <*> d
+
+-- \-?\d+\.?\d* as float
+float :: ReadP Float
+float = read <$> n
+  where
+    i = (++) <$> option "" (string "-") <*> munch1 isDigit
+    d = option "" ((++) <$> string "." <*> option "0" (munch1 isDigit))
+    n = (++) <$> i <*> d

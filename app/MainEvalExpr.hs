@@ -19,16 +19,13 @@ import System.Environment (getArgs)
 import Text.Printf (printf)
 
 parseOperand :: ReadP AST
-parseOperand = do
-  n <- unsignedFloat
-  skipSpaces
-  pure $ Operand n
+parseOperand = Operand <$> token unsignedFloat
 
 parseOperator :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 parseOperator x f = reserved x >> pure f
 
-parseAdd :: ReadP (AST -> AST -> AST)
-parseAdd = parseOperator "+" opAdd
+parseAdd :: ReadP AST
+parseAdd = opAdd <$> parseOperand <*> (char '+' *> parseOperand)
   where
     opAdd = \a b -> Operator $ BinaryOperator $ Add a b
 
@@ -60,8 +57,8 @@ parseFactor :: ReadP AST
 parseFactor = parseOperand <|> parens parseExpr
 
 maybeAstParser :: String -> Maybe AST
-maybeAstParser s = case readP_to_S parseExpr s of
-  [(ast, _)] -> Just ast
+maybeAstParser s = case readP_to_S (skipSpaces *> parseExpr <* eof) s of
+  [(ast, "")] -> Just ast
   _ -> Nothing
 
 eval :: AST -> Float

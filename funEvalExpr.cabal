@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6c8c5430e2f44cc7b0c6cd3b095ecc884d7d77e3965709616bd2fc5a7c2d694f
+-- hash: 475adeb43dcaf4b96cffa4a96ac98080fbb1743581b66b6ac3a9ab64253bb994
 
 name:           funEvalExpr
 version:        1
@@ -31,6 +31,7 @@ library
       HandleExitProgram
       LibParserCombinators
       Maths
+      Parser
   other-modules:
       Paths_funEvalExpr
   hs-source-dirs:

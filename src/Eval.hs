@@ -1,11 +1,6 @@
 module Eval (eval) where
 
 import Ast
-  ( AST (..),
-    BinaryOperator (..),
-    Operator (..),
-    UnaryOperator (..),
-  )
 import Data.Fixed (mod')
 
 eval :: AST -> Float

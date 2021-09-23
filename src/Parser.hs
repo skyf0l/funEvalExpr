@@ -14,9 +14,6 @@ parseFactor = parseUnaryOperators <*> (parseOperand <|> parens parseExpr)
 wrapUnaryOperator :: String -> (a -> a) -> ReadP (a -> a)
 wrapUnaryOperator x f = reserved x >> pure f
 
-notUnaryOperator :: ReadP (AST -> AST)
-notUnaryOperator = pure id
-
 parsePos :: ReadP (AST -> AST)
 parsePos = wrapUnaryOperator "+" opPos
   where
@@ -36,7 +33,9 @@ parseUnaryOperator :: ReadP (AST -> AST)
 parseUnaryOperator = parsePos <|> parseNeg <|> parseNot
 
 parseUnaryOperators :: ReadP (AST -> AST)
-parseUnaryOperators = (parseUnaryOperator >>= \f -> parseUnaryOperators >>= \g -> pure (g . f)) <|> pure id
+parseUnaryOperators = (parseUnaryOperator >>= subUnaryOperators) <|> pure id
+  where
+    subUnaryOperators = \f -> parseUnaryOperators >>= \g -> pure (g . f)
 
 -- Binary operators
 wrapBinaryOperator :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
@@ -127,7 +126,13 @@ parseAddSub :: ReadP (AST -> AST -> AST)
 parseAddSub = parseAdd <|> parseSub
 
 parseGtLtGeLeEqNe :: ReadP (AST -> AST -> AST)
-parseGtLtGeLeEqNe = parseGt <|> parseLt <|> parseGe <|> parseLe <|> parseEq <|> parseNe
+parseGtLtGeLeEqNe =
+  parseGt
+    <|> parseLt
+    <|> parseGe
+    <|> parseLe
+    <|> parseEq
+    <|> parseNe
 
 -- 70
 parseTerm70 :: ReadP AST

@@ -5,10 +5,10 @@ import LibParserCombinators
 
 -- Operand/factor and unary operators
 parseOperand :: ReadP AST
-parseOperand = Operand <$> token float
+parseOperand = Operand <$> token unsignedFloat
 
 parseFactor :: ReadP AST
-parseFactor = parseUnaryOperator >> (parseOperand <|> parens parseExpr)
+parseFactor = parseUnaryOperators <*> (parseOperand <|> parens parseExpr)
 
 -- Unary operators
 wrapUnaryOperator :: String -> (a -> a) -> ReadP (a -> a)
@@ -33,10 +33,10 @@ parseNot = wrapUnaryOperator "!" opNot
     opNot = Operator . UnaryOperator . Not
 
 parseUnaryOperator :: ReadP (AST -> AST)
-parseUnaryOperator = parsePos <|> parseNeg <|> parseNot <|> notUnaryOperator
+parseUnaryOperator = parsePos <|> parseNeg <|> parseNot
 
 parseUnaryOperators :: ReadP (AST -> AST)
-parseUnaryOperators = parseUnaryOperator >>= \f -> parseUnaryOperators >>= \g -> pure (f . g)
+parseUnaryOperators = (parseUnaryOperator >>= \f -> parseUnaryOperators >>= \g -> pure (g . f)) <|> pure id
 
 -- Binary operators
 wrapBinaryOperator :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
@@ -130,8 +130,8 @@ parseGtLtGeLeEqNe :: ReadP (AST -> AST -> AST)
 parseGtLtGeLeEqNe = parseGt <|> parseLt <|> parseGe <|> parseLe <|> parseEq <|> parseNe
 
 -- 70
-parseExpr :: ReadP AST
-parseExpr = parseTerm75 `chainl1` parseOr
+parseTerm70 :: ReadP AST
+parseTerm70 = parseTerm75 `chainl1` parseOr
 
 -- 75
 parseTerm75 :: ReadP AST
@@ -152,6 +152,10 @@ parseTerm100 = parseTerm120 `chainl1` parseMulDivMod
 -- 120
 parseTerm120 :: ReadP AST
 parseTerm120 = parseFactor `chainl1` parsePowExpr
+
+-- 70
+parseExpr :: ReadP AST
+parseExpr = parseTerm70
 
 maybeAstParser :: String -> Maybe AST
 maybeAstParser s = case readP_to_S (skipSpaces *> parseExpr <* eof) s of

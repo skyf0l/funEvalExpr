@@ -1,12 +1,12 @@
 {-# OPTIONS_GHC -Wno-missing-methods #-}
 
--- Combinatorial ReadP library
+-- Parser Combinators library
 -- https://hackage.haskell.org/package/base-4.15.0.0/docs/Text-ParserCombinators-ReadP.html
 
 -- https://two-wrongs.com/parser-combinators-parsing-for-haskell-beginners
 
-module CombinatorialParser
-  ( module CombinatorialParser,
+module LibParserCombinators
+  ( module LibParserCombinators,
     module Text.ParserCombinators.ReadP,
     module Control.Applicative,
   )

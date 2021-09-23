@@ -6,7 +6,6 @@ import Ast
     Operator (..),
     UnaryOperator (..),
   )
-import CombinatorialParser
 import Eval (eval)
 import HandleExitProgram
   ( ExitProgram (..),
@@ -14,6 +13,7 @@ import HandleExitProgram
     handleExitProgram,
     throw,
   )
+import LibParserCombinators
 import Maths (roundHalfUp)
 import System.Environment (getArgs)
 import Text.Printf (printf)

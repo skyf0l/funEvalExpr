@@ -45,7 +45,7 @@ wrapBinaryOperator x f = reserved x >> pure f
 parseExp :: ReadP (AST -> AST -> AST)
 parseExp = wrapBinaryOperator "e" opExp
   where
-    opExp = \a b -> Operator $ BinaryOperator $ Sub a b
+    opExp = \a b -> Operator $ BinaryOperator $ Exp a b
 
 parsePow :: ReadP (AST -> AST -> AST)
 parsePow = wrapBinaryOperator "^" opPow

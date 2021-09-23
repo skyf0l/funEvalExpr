@@ -18,14 +18,17 @@ import Parser (maybeAstParser)
 import System.Environment (getArgs)
 import Text.Printf (printf)
 
+evalExpr :: String -> IO ()
+evalExpr exprStr = case maybeAstParser exprStr of
+  Just ast -> printf "%.2f\n" res
+    where
+      res = eval ast
+      formatRes = roundHalfUp res 2
+  Nothing -> throw $ ExitProgram 84 "Invalid expression"
+
 main :: IO ()
 main = handleExitProgram $ do
   args <- getArgs
   case args of
-    [exprStr] -> case maybeAstParser exprStr of
-      Just ast -> printf "%.2f\n" res
-        where
-          res = eval ast
-          formatRes = roundHalfUp res 2
-      Nothing -> throw $ ExitProgram 84 "Invalid expression"
+    [exprStr] -> evalExpr exprStr
     _ -> throw $ ExitProgram 84 "Usage: ./funEvalExpr <expr>"

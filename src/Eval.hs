@@ -9,7 +9,6 @@ eval (Operator (UnaryOperator (Pos a))) = eval a
 eval (Operator (UnaryOperator (Neg a))) = - eval a
 eval (Operator (UnaryOperator (Not (Operand 0)))) = 1
 eval (Operator (UnaryOperator (Not _))) = 0
-eval (Operator (BinaryOperator (Exp a b))) = eval a * 10 ** eval b
 eval (Operator (BinaryOperator (Pow a b))) = eval a ** eval b
 eval (Operator (BinaryOperator (Mul a b))) = eval a * eval b
 eval (Operator (BinaryOperator (Div a b))) = eval a / eval b

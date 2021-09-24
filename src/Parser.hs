@@ -41,11 +41,6 @@ parseUnaryOperators = (parseUnaryOperator >>= subUnaryOperators) <|> pure id
 wrapBinaryOperator :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 wrapBinaryOperator x f = reserved x >> pure f
 
-parseExp :: ReadP (AST -> AST -> AST)
-parseExp = wrapBinaryOperator "e" opExp
-  where
-    opExp = \a b -> Operator $ BinaryOperator $ Exp a b
-
 parsePow :: ReadP (AST -> AST -> AST)
 parsePow = wrapBinaryOperator "^" opPow
   where
@@ -116,9 +111,6 @@ parseOr = wrapBinaryOperator "||" opOr
   where
     opOr = \a b -> Operator $ BinaryOperator $ Or a b
 
-parsePowExpr :: ReadP (AST -> AST -> AST)
-parsePowExpr = parsePow <|> parseExp
-
 parseMulDivMod :: ReadP (AST -> AST -> AST)
 parseMulDivMod = parseMul <|> parseDiv <|> parseMod
 
@@ -156,7 +148,7 @@ parseTerm100 = parseTerm120 `chainl1` parseMulDivMod
 
 -- 120
 parseTerm120 :: ReadP AST
-parseTerm120 = parseFactor `chainl1` parsePowExpr
+parseTerm120 = parseFactor `chainl1` parsePow
 
 -- 70
 parseExpr :: ReadP AST

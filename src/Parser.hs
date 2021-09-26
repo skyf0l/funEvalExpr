@@ -3,10 +3,20 @@ module Parser (maybeAstParser) where
 import Ast
 import LibParserCombinators
 
--- Operand/factor and unary operators
-parseOperand :: ReadP AST
-parseOperand = Operand <$> token unsignedFloat
+-- Operand
+parseExp :: ReadP AST
+parseExp = string "e" *> parseFactor
 
+parseOperand :: ReadP AST
+parseOperand = do
+  n <- Operand <$> token unsignedFloat
+  exp <- token parseExp <|> pure (Operand 0)
+  return $ opMul n $ opPow (Operand 10) exp
+  where
+    opMul = \a b -> Operator $ BinaryOperator $ Mul a b
+    opPow = \a b -> Operator $ BinaryOperator $ Pow a b
+
+-- Factor
 parseFactor :: ReadP AST
 parseFactor = parseUnaryOperators <*> (parseOperand <|> parens parseExpr)
 

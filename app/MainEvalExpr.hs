@@ -31,5 +31,5 @@ main = handleExitProgram $ do
   args <- getArgs
   case args of
     [exprStr] -> evalExpr exprStr
-    ["-d", exprStr] -> print $ show $ maybeAstParser exprStr
+    ["-d", exprStr] -> print $ maybeAstParser exprStr
     _ -> throw $ ExitProgram 84 "Usage: ./funEvalExpr <expr>"

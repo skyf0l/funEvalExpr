@@ -7,14 +7,18 @@ import LibParserCombinators
 parseExp :: ReadP AST
 parseExp = string "e" *> parseFactor
 
-parseOperand :: ReadP AST
-parseOperand = do
-  n <- Operand <$> token unsignedFloat
-  exp <- token parseExp <|> pure (Operand 0)
-  return $ opMul n $ opPow (Operand 10) exp
+parseOnlyOperand :: ReadP AST
+parseOnlyOperand = Operand <$> token unsignedFloat
+
+parseExponentOperand :: ReadP AST
+parseExponentOperand = opExp <$> parseOnlyOperand <*> token parseExp
   where
     opMul = \a b -> Operator $ BinaryOperator $ Mul a b
     opPow = \a b -> Operator $ BinaryOperator $ Pow a b
+    opExp = \a b -> opMul a $ opPow (Operand 10) b
+
+parseOperand :: ReadP AST
+parseOperand = parseOnlyOperand <|> parseExponentOperand
 
 -- Factor
 parseFactor :: ReadP AST
@@ -160,7 +164,7 @@ parseTerm100 = parseTerm120 `chainl1` parseMulDivMod
 parseTerm120 :: ReadP AST
 parseTerm120 = parseFactor `chainl1` parsePow
 
--- 70
+-- Loop
 parseExpr :: ReadP AST
 parseExpr = parseTerm70
 

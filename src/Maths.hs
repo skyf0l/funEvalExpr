@@ -1,7 +1,12 @@
 module Maths
   ( roundHalfUp,
+    fixNegativeZero,
   )
 where
+
+fixNegativeZero :: Float -> Float
+fixNegativeZero 0.0 = 0.0
+fixNegativeZero x = x
 
 -- number -> expected decimal digits -> result
 roundHalfUp :: Float -> Int -> Float

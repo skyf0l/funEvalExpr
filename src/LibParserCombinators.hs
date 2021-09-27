@@ -57,18 +57,22 @@ integer = read <$> i
   where
     i = (++) <$> option "" (string "-") <*> munch1 isDigit
 
+-- multi concat
+concat3 :: String -> String -> String -> String
+concat3 a b c = a ++ b ++ c
+
 -- \d+\.?\d* as float
+-- 1 or 1.0 or .0 or 1 . 0 or .
 unsignedFloat :: ReadP Float
-unsignedFloat = read <$> n
+unsignedFloat = fromIntegral <$> unsignedInteger <|> read <$> f
   where
-    i = munch1 isDigit
-    d = option "" ((++) <$> string "." <*> option "0" (munch1 isDigit))
-    n = (++) <$> i <*> d
+    entire = option "0" (munch1 isDigit)
+    dot = string "."
+    fraction = option "0" (munch1 isDigit)
+    f = concat3 <$> entire <*> dot <*> fraction
 
 -- \-?\d+\.?\d* as float
 float :: ReadP Float
-float = read <$> n
+float = negativeFloat <|> unsignedFloat
   where
-    i = (++) <$> option "" (string "-") <*> munch1 isDigit
-    d = option "" ((++) <$> string "." <*> option "0" (munch1 isDigit))
-    n = (++) <$> i <*> d
+    negativeFloat = (-) <$> pure 0 <*> option 0 (char '-' *> unsignedFloat)

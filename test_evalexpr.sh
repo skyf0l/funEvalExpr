@@ -83,16 +83,25 @@ test_evalexpr_error_handling ")78("
 test_evalexpr_error_handling "1+1+"
 
 # result
-echo -e "\n$BOLD""Test result""$UNBOLD"
+echo -e "\n$BOLD""Test evalexpr""$UNBOLD"
 
 # Somes tests
+echo "Test unary positive"
 test_evalexpr "3+5.34" 8.34
 test_evalexpr "(0.345 + 5) * (- 2 -1) / 3" -5.34
 test_evalexpr "(3+2)*5" 25.00
 test_evalexpr "3.+5." 8.00
 test_evalexpr "    (    3 +  2  )    *   5     " 25.00
+
+# Number format
+echo -e "\n$BOLD""Test number format""$UNBOLD"
 test_evalexpr "38." 38.00
 test_evalexpr ".22" 0.22
+test_evalexpr "." 0.00
+test_evalexpr "42 .42" 42.42
+test_evalexpr "42. 42" 42.42
+test_evalexpr "42 . 42" 42.42
+test_evalexpr " 42 . 42 " 42.42
 
 ## Unary operators
 echo -e "\n$BOLD""Test unary operators""$UNBOLD"

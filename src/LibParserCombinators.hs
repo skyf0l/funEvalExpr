@@ -15,6 +15,7 @@ where
 import Control.Applicative (Alternative ((<|>)))
 import Control.Monad (MonadPlus (..))
 import Data.Char (isDigit)
+import Data.Functor (($>))
 import Text.ParserCombinators.ReadP
 
 -- Many -> zero or more
@@ -66,7 +67,7 @@ concat3 a b c = a ++ b ++ c
 unsignedFloat :: ReadP Float
 unsignedFloat = fromIntegral <$> unsignedInteger <|> read <$> f
   where
-    entire = option "0" (munch1 isDigit)
-    dot = string "."
+    entire = option "0" (token $ munch1 isDigit)
+    dot = token $ string "."
     fraction = option "0" (munch1 isDigit)
     f = concat3 <$> entire <*> dot <*> fraction

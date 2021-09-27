@@ -70,9 +70,3 @@ unsignedFloat = fromIntegral <$> unsignedInteger <|> read <$> f
     dot = string "."
     fraction = option "0" (munch1 isDigit)
     f = concat3 <$> entire <*> dot <*> fraction
-
--- \-?\d+\.?\d* as float
-float :: ReadP Float
-float = negativeFloat <|> unsignedFloat
-  where
-    negativeFloat = (-) <$> pure 0 <*> option 0 (char '-' *> unsignedFloat)

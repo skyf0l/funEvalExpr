@@ -12,6 +12,7 @@ eval (Operand n) = n
 eval (Operator (UnaryOperator (Pos a))) = eval a
 eval (Operator (UnaryOperator (Neg a))) = - eval a
 eval (Operator (UnaryOperator (Not a))) = notOperator $ eval a
+eval (Operator (BinaryOperator (Exp a b))) = eval a * 10 ** eval b
 eval (Operator (BinaryOperator (Pow a b))) = eval a ** eval b
 eval (Operator (BinaryOperator (Mul a b))) = eval a * eval b
 eval (Operator (BinaryOperator (Div a b))) = eval a / eval b

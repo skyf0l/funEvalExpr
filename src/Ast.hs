@@ -23,7 +23,8 @@ data UnaryOperator
   deriving (Eq, Show)
 
 data BinaryOperator
-  = Pow AST AST
+  = Exp AST AST
+  | Pow AST AST
   | Mul AST AST
   | Div AST AST
   | Mod AST AST

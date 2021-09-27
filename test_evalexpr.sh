@@ -131,8 +131,9 @@ test_evalexpr "!1" 0.00
 
 # Unary operators priority
 echo "Test unary operators priority"
-test_evalexpr "-1^2" -1.00
+test_evalexpr "-1^2" 1.00
 test_evalexpr "(-1)^2" 1.00
+test_evalexpr "-(1^2)" -1.00
 
 # Unary operators series
 echo "Test unary operators series"
@@ -161,6 +162,7 @@ test_evalexpr "1e-0" 1.00
 test_evalexpr "10e3" 10000.00
 test_evalexpr "10e+3" 10000.00
 test_evalexpr "10e-3" 0.01
+test_evalexpr "10e+-3" 0.01
 
 # Binary examples
 echo "Binary examples"

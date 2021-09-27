@@ -4,21 +4,8 @@ import Ast
 import LibParserCombinators
 
 -- Operand
-parseExp :: ReadP AST
-parseExp = token (string "e") *> parseFactor
-
-parseOnlyOperand :: ReadP AST
-parseOnlyOperand = Operand <$> token unsignedFloat
-
-parseExponentOperand :: ReadP AST
-parseExponentOperand = opExp <$> parseOnlyOperand <*> token parseExp
-  where
-    opMul = \a b -> Operator $ BinaryOperator $ Mul a b
-    opPow = \a b -> Operator $ BinaryOperator $ Pow a b
-    opExp = \a b -> opMul a $ opPow (Operand 10) b
-
 parseOperand :: ReadP AST
-parseOperand = parseOnlyOperand <|> parseExponentOperand
+parseOperand = Operand <$> token unsignedFloat
 
 -- Factor
 parseFactor :: ReadP AST
@@ -54,6 +41,11 @@ parseUnaryOperators = (parseUnaryOperator >>= subUnaryOperators) <|> pure id
 -- Binary operators
 wrapBinaryOperator :: String -> (a -> a -> a) -> ReadP (a -> a -> a)
 wrapBinaryOperator x f = reserved x >> pure f
+
+parseExp :: ReadP (AST -> AST -> AST)
+parseExp = wrapBinaryOperator "e" opExp
+  where
+    opExp = \a b -> Operator $ BinaryOperator $ Exp a b
 
 parsePow :: ReadP (AST -> AST -> AST)
 parsePow = wrapBinaryOperator "^" opPow
@@ -125,6 +117,9 @@ parseOr = wrapBinaryOperator "||" opOr
   where
     opOr = \a b -> Operator $ BinaryOperator $ Or a b
 
+parsePowExp :: ReadP (AST -> AST -> AST)
+parsePowExp = parsePow <|> parseExp
+
 parseMulDivMod :: ReadP (AST -> AST -> AST)
 parseMulDivMod = parseMul <|> parseDiv <|> parseMod
 
@@ -162,7 +157,7 @@ parseTerm100 = parseTerm120 `chainl1` parseMulDivMod
 
 -- 120
 parseTerm120 :: ReadP AST
-parseTerm120 = parseFactor `chainl1` parsePow
+parseTerm120 = parseFactor `chainl1` parsePowExp
 
 -- Loop
 parseExpr :: ReadP AST

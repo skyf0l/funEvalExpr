@@ -5,7 +5,7 @@ import LibParserCombinators
 
 -- Operand
 parseExp :: ReadP AST
-parseExp = string "e" *> parseFactor
+parseExp = token (string "e") *> parseFactor
 
 parseOnlyOperand :: ReadP AST
 parseOnlyOperand = Operand <$> token unsignedFloat

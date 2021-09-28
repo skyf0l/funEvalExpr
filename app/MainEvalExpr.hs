@@ -26,10 +26,15 @@ evalExpr exprStr = case maybeAstParser exprStr of
       formatRes = roundHalfUp res 2
   Nothing -> throw $ ExitProgram 84 "Invalid expression"
 
+debugParser :: String -> IO ()
+debugParser exprStr = case maybeAstParser exprStr of
+  Just ast -> print ast
+  Nothing -> throw $ ExitProgram 84 "Invalid expression"
+
 main :: IO ()
 main = handleExitProgram $ do
   args <- getArgs
   case args of
     [exprStr] -> evalExpr exprStr
-    ["-d", exprStr] -> print $ maybeAstParser exprStr
+    ["-d", exprStr] -> debugParser exprStr
     _ -> throw $ ExitProgram 84 "Usage: ./funEvalExpr <expr>"

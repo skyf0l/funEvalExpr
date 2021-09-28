@@ -62,7 +62,7 @@ integer = read <$> i
 concat3 :: String -> String -> String -> String
 concat3 a b c = a ++ b ++ c
 
--- \d+\.?\d* as float
+-- \d*\.?\d* as float
 -- 1 or 1.0 or .0 or 1 . 0 or .
 unsignedFloat :: ReadP Float
 unsignedFloat = fromIntegral <$> unsignedInteger <|> read <$> f

@@ -36,11 +36,11 @@ digit = satisfy isDigit
 spaces :: ReadP String
 spaces = many $ oneOf " \n\r"
 
--- .*[^\s]
+-- .*[^\s]*
 token :: ReadP a -> ReadP a
 token p = p <* skipSpaces
 
--- .*[^\s]
+-- .*[^\s]*
 reserved :: String -> ReadP String
 reserved s = token (string s)
 

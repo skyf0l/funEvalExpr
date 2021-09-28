@@ -32,7 +32,7 @@ oneOf s = satisfy (`elem` s)
 digit :: ReadP Char
 digit = satisfy isDigit
 
--- \s+
+-- \s*
 spaces :: ReadP String
 spaces = many $ oneOf " \n\r"
 

@@ -34,6 +34,19 @@ $ ./funEvalExpr "(0.345+5)*(-2-1)/3"
 
 # Features
 
+## Operands format
+
+```regex
+(?:\d+)|(?:\d*\.?\d*)
+```
+
+Valid operands can be:
+- `42`
+- `42.42`
+- `42.`
+- `.42`
+- `.`
+
 ## Operators
 
 ### Binary Operators
@@ -70,49 +83,19 @@ With `-d` option, the program will print the AST of the expression.
 
 ```
 $ ./funEvalExpr -d "(0.345+5)*(-2-1)/3"
-Just (
-    Operator (
-        BinaryOperator (
-            Div (
-                Operator (
-                    BinaryOperator (
-                        Mul (
-                            Operator (
-                                BinaryOperator (
-                                    Add (
-                                        Operand 0.345
-                                    )
-                                    (
-                                        Operand 5.0
-                                    )
-                                )
-                            )
-                        )
-                        (
-                            Operator (
-                                BinaryOperator (
-                                    Sub (
-                                        Operator (
-                                            UnaryOperator (
-                                                Neg (
-                                                    Operand 2.0
-                                                )
-                                            )
-                                        )
-                                    )
-                                    (
-                                        Operand 1.0
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-            (
-                Operand 3.0
-            )
+Div(
+    Mul(
+        Add(
+            0.345,
+            5.0
+        ),
+        Sub(
+            Neg(
+                2.0
+            ),
+            1.0
         )
-    )
+    ),
+    3.0
 )
 ```

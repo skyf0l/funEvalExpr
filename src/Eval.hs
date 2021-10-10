@@ -2,6 +2,7 @@ module Eval (eval) where
 
 import Ast
 import Data.Fixed (mod')
+import HandleExitProgram (ExitProgram (ExitProgram), throw)
 
 notOperator :: Float -> Float
 notOperator 0 = 1
@@ -15,8 +16,12 @@ eval (Operator (UnaryOperator (Not a))) = notOperator $ eval a
 eval (Operator (BinaryOperator (Exp a b))) = eval a * 10 ** eval b
 eval (Operator (BinaryOperator (Pow a b))) = eval a ** eval b
 eval (Operator (BinaryOperator (Mul a b))) = eval a * eval b
-eval (Operator (BinaryOperator (Div a b))) = eval a / eval b
-eval (Operator (BinaryOperator (Mod a b))) = eval a `mod'` eval b
+eval (Operator (BinaryOperator (Div a b))) = case eval b of
+  0 -> throw $ ExitProgram 84 "Division by zero"
+  b' -> eval a / b'
+eval (Operator (BinaryOperator (Mod a b))) = case eval b of
+  0 -> throw $ ExitProgram 84 "Modulo by zero"
+  b' -> eval a `mod'` b'
 eval (Operator (BinaryOperator (Add a b))) = eval a + eval b
 eval (Operator (BinaryOperator (Sub a b))) = eval a - eval b
 eval (Operator (BinaryOperator (Gt a b)))

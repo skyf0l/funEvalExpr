@@ -22,5 +22,5 @@ handleExitProgram action = action `catch` handle
   where
     handle :: ExitProgram -> IO a
     handle (ExitProgram exitCode msg) = do
-      putStrLn msg
+      _ <- putStrLn msg
       exitWith $ ExitFailure exitCode

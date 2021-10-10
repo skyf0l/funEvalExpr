@@ -81,6 +81,8 @@ test_evalexpr_error_handling "()"
 test_evalexpr_error_handling ")("
 test_evalexpr_error_handling ")78("
 test_evalexpr_error_handling "1+1+"
+test_evalexpr_error_handling "0/0"
+test_evalexpr_error_handling "0%0"
 
 # result
 echo -e "\n$BOLD""Test evalexpr""$UNBOLD"

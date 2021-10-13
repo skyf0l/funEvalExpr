@@ -14,12 +14,12 @@ import HandleExitProgram
     throw,
   )
 import Maths (fixNegativeZero, roundHalfUp)
-import Parser (maybeAstParser)
+import Parser (parseExpression)
 import System.Environment (getArgs)
 import Text.Printf (printf)
 
 evalExpr :: String -> IO ()
-evalExpr exprStr = case maybeAstParser exprStr of
+evalExpr exprStr = case parseExpression exprStr of
   Just ast -> printf "%.2f\n" res
     where
       res = fixNegativeZero $ eval ast
@@ -27,7 +27,7 @@ evalExpr exprStr = case maybeAstParser exprStr of
   Nothing -> throw $ ExitProgram 84 "Invalid expression"
 
 debugParser :: String -> IO ()
-debugParser exprStr = case maybeAstParser exprStr of
+debugParser exprStr = case parseExpression exprStr of
   Just ast -> print ast
   Nothing -> throw $ ExitProgram 84 "Invalid expression"
 

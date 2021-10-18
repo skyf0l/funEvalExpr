@@ -156,7 +156,7 @@ digit = satisfy isDigit
 
 -- \s*
 spaces :: Parser String
-spaces = many $ oneOf " \n\r"
+spaces = many $ oneOf " \t\n\r"
 
 skipSpaces :: Parser ()
 skipSpaces = () <$ spaces

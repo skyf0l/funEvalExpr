@@ -24,27 +24,12 @@ eval (Operator (BinaryOperator (Mod a b))) = case eval b of
   b' -> eval a `mod'` b'
 eval (Operator (BinaryOperator (Add a b))) = eval a + eval b
 eval (Operator (BinaryOperator (Sub a b))) = eval a - eval b
-eval (Operator (BinaryOperator (Gt a b)))
-  | eval a > eval b = 1
-  | otherwise = 0
-eval (Operator (BinaryOperator (Lt a b)))
-  | eval a < eval b = 1
-  | otherwise = 0
-eval (Operator (BinaryOperator (Ge a b)))
-  | eval a >= eval b = 1
-  | otherwise = 0
-eval (Operator (BinaryOperator (Le a b)))
-  | eval a <= eval b = 1
-  | otherwise = 0
-eval (Operator (BinaryOperator (Eq a b)))
-  | eval a == eval b = 1
-  | otherwise = 0
-eval (Operator (BinaryOperator (Ne a b)))
-  | eval a /= eval b = 1
-  | otherwise = 0
-eval (Operator (BinaryOperator (And a b)))
-  | eval a /= 0 && eval b /= 0 = 1
-  | otherwise = 0
-eval (Operator (BinaryOperator (Or a b)))
-  | eval a /= 0 || eval b /= 0 = 1
-  | otherwise = 0
+eval (Operator (BinaryOperator (Gt a b))) | eval a > eval b = 1
+eval (Operator (BinaryOperator (Lt a b))) | eval a < eval b = 1
+eval (Operator (BinaryOperator (Ge a b))) | eval a >= eval b = 1
+eval (Operator (BinaryOperator (Le a b))) | eval a <= eval b = 1
+eval (Operator (BinaryOperator (Eq a b))) | eval a == eval b = 1
+eval (Operator (BinaryOperator (Ne a b))) | eval a /= eval b = 1
+eval (Operator (BinaryOperator (And a b))) | eval a /= 0 && eval b /= 0 = 1
+eval (Operator (BinaryOperator (Or a b))) | eval a /= 0 || eval b /= 0 = 1
+eval _ = 0

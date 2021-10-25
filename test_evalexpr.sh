@@ -88,7 +88,6 @@ test_evalexpr_error_handling "0%0"
 echo -e "\n$BOLD""Test evalexpr""$UNBOLD"
 
 # Somes tests
-echo "Test unary positive"
 test_evalexpr "3+5.34" 8.34
 test_evalexpr "(0.345 + 5) * (- 2 -1) / 3" -5.34
 test_evalexpr "(3+2)*5" 25.00

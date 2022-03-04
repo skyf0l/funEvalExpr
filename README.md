@@ -75,7 +75,7 @@ Valid operands can be:
 | -------- | --- | ---------------- |
 | +        | Pos | Identity         |
 | -        | Neg | Negation         |
-| !        | Neg | Logical negation |
+| !        | Not | Logical negation |
 
 ## Debug
 
